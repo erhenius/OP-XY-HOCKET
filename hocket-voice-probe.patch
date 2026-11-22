@@ -1103,10 +1103,10 @@ index f5e49b1..22c515b 100644
          opxy::screen::draw(&o->base);
 diff --git a/sdk/platform/opxy-1.2.1/hocket_settings.hpp b/sdk/platform/opxy-1.2.1/hocket_settings.hpp
 new file mode 100644
-index 0000000..03eee79
+index 0000000..76515d1
 --- /dev/null
 +++ b/sdk/platform/opxy-1.2.1/hocket_settings.hpp
-@@ -0,0 +1,72 @@
+@@ -0,0 +1,80 @@
 +// Included after the machine's Grid definition by its native player adapter.
 +#pragma once
 +#include "player_controls.hpp"
@@ -1173,6 +1173,14 @@ index 0000000..03eee79
 +    void save(const void* current,u8* out) {
 +        for (u32 t=0;t<tracks;++t) track(current,t).encode(out+t*width);
 +    }
++    bool snapshot(const void* active,const void* serialized,u8* out) {
++        // Stock OS 1.2.1 copies the live project to this fixed buffer before
++        // its serializer runs. The buffer has no Hocket settings bank of its own.
++        const void* stock_copy=reinterpret_cast<const void*>(0x85b7e3d4u);
++        if (!active || (serialized!=active && serialized!=stock_copy)) return false;
++        save(active,out);
++        return true;
++    }
 +    void clear() {
 +        for (auto& bank:banks) for (auto& t:bank) t=Track{};
 +        second=nullptr;
@@ -1191,7 +1199,7 @@ index 05f69e3..1b9e38b 100644
 +    if (sdk_hocket_save) budget=budget>hocket_format::hocket_reserve?budget-hocket_format::hocket_reserve:0;
      saved_limit = 0;
 diff --git a/sdk/platform/opxy-1.2.1/player_object.cpp.in b/sdk/platform/opxy-1.2.1/player_object.cpp.in
-index d69a3f9..f7cfa58 100644
+index d69a3f9..4b2424b 100644
 --- a/sdk/platform/opxy-1.2.1/player_object.cpp.in
 +++ b/sdk/platform/opxy-1.2.1/player_object.cpp.in
 @@ -7,2 +7,6 @@
@@ -1201,7 +1209,7 @@ index d69a3f9..f7cfa58 100644
 +#include "hocket_settings.hpp"
 +#endif
  #include "stock.hpp"
-@@ -45,4 +49,31 @@ static u32 routing_mode(void*) { return 0; }
+@@ -45,4 +49,29 @@ static u32 routing_mode(void*) { return 0; }
  opxy::u32 sdk_voice_ticks() __asm__("sdk_voice_ticks");
 -static hocket::Grid grids[8];
 -static void editor_init(u32 track) { grids[track]=hocket::Grid{}; }
@@ -1213,9 +1221,7 @@ index d69a3f9..f7cfa58 100644
 +void sdk_hocket_load(const void*,const opxy::u8*) __asm__("sdk_hocket_load");
 +void sdk_hocket_clear() __asm__("sdk_hocket_clear");
 +bool sdk_hocket_save(const void* project,opxy::u8* out) {
-+    if (!project || project!=current_project()) return false;
-+    projects.save(project,out);
-+    return true;
++    return projects.snapshot(current_project(),project,out);
 +}
 +void sdk_hocket_load(const void* project,const opxy::u8* data) {
 +    projects.load(current_project(),project,data);
@@ -1235,7 +1241,7 @@ index d69a3f9..f7cfa58 100644
 +    if (g.capture.armed()) ++g.capture.session;
 +}
  static bool spray_controls(u32 track) {
-@@ -51,17 +82,32 @@ static bool spray_controls(u32 track) {
+@@ -51,17 +80,32 @@ static bool spray_controls(u32 track) {
  }
 -static bool editor_click(u32 track,u32 k) {
 -    hocket::Grid& g=grids[track];
@@ -1280,17 +1286,17 @@ index d69a3f9..f7cfa58 100644
 +    mark_edit(setup,before);
 +    return true;
  }
-@@ -71,2 +117,4 @@ static void maintain_clock(void* object) {
+@@ -71,2 +115,4 @@ static void maintain_clock(void* object) {
  }
 +// A new player object may reuse a track while older synth voices still release.
 +static u32 phraseSequences[8];
  struct HandoffPort {
-@@ -75,3 +123,3 @@ struct HandoffPort {
+@@ -75,3 +121,3 @@ struct HandoffPort {
      u32 track() const { return static_cast<const u32*>(object)[1]; }
 -    opxy::player::Controls controls() const { return opxy::platform::player_controls(object); }
 +    opxy::player::Controls controls() const { return authored_controls(object); }
      HandoffPort at(u32 dest) const {
-@@ -81,5 +129,9 @@ struct HandoffPort {
+@@ -81,5 +127,9 @@ struct HandoffPort {
      u32 time_stamp() const { return sdk_voice_ticks(); }
 -    hocket::Grid& grid() const { return grids[track()]; }
 +    hocket::Grid& grid() const { return settings(track()).grid; }
@@ -1302,11 +1308,11 @@ index d69a3f9..f7cfa58 100644
 +    }
 +    void on(u32 pitch, opxy::u8 velocity, u32 source, u32 owner,u32 fade,u32 start) {
          opxy::player::Plan plan;
-@@ -88,2 +140,3 @@ struct HandoffPort {
+@@ -88,2 +138,3 @@ struct HandoffPort {
          opxy::platform::play_plan(object, pitch, plan);
 +        if (owner) sdk_hprobe_stamp(object,track(),pitch,source,owner,fade,start);
      }
-@@ -154,3 +207,7 @@ static void step_player(void* object) {
+@@ -154,3 +205,7 @@ static void step_player(void* object) {
  #endif
 +#ifdef OPXY_HOCKET_PLAYER
 +    sdk_hprobe_step(object);
@@ -1315,7 +1321,7 @@ index d69a3f9..f7cfa58 100644
 +#endif
  #ifdef OPXY_HOCKET_PLAYER
 diff --git a/sdk/platform/opxy-1.2.1/project_companion.cpp b/sdk/platform/opxy-1.2.1/project_companion.cpp
-index c61a0cc..fc767ee 100644
+index c61a0cc..920353a 100644
 --- a/sdk/platform/opxy-1.2.1/project_companion.cpp
 +++ b/sdk/platform/opxy-1.2.1/project_companion.cpp
 @@ -55,2 +55,10 @@ namespace {
@@ -1345,19 +1351,19 @@ index c61a0cc..fc767ee 100644
 +}
 +
  // What the companion's sections besides open-xy.control and open-xy.locks may take: its
-@@ -168,2 +189,4 @@ void write_companion(void* project, u32 bytes, u32 crc) {
-     if (!file) return;
-+    opxy::u8 hocket[hocket_bytes];
-+    const bool have_hocket=sdk_hocket_save && sdk_hocket_save(project,hocket);
-     // open-xy.locks, after its garbage collection: its size first, then the sections
-@@ -179,4 +202,6 @@ void write_companion(void* project, u32 bytes, u32 crc) {
+@@ -165,3 +186,3 @@ u32 locks_budget() {
+ 
+-void write_companion(void* project, u32 bytes, u32 crc) {
++void write_companion(void* project, u32 bytes, u32 crc, const opxy::u8* hocket) {
+     File* file = file_open(companion, "wb");
+@@ -179,4 +200,6 @@ void write_companion(void* project, u32 bytes, u32 crc) {
      // Track control's section goes here, before open-xy.machines, written to the file directly.
-+    sdk_companion_reserved+=have_hocket?hocket_reserve:0;
++    sdk_companion_reserved+=hocket?hocket_reserve:0;
      w.flush();
      sdk_project_kept(file);
-+    if (have_hocket) { write_hocket(w,hocket); w.flush(); }
++    if (hocket) { write_hocket(w,hocket); w.flush(); }
      if (locks) sdk_project_locks_write(file);
-@@ -737,2 +762,23 @@ bool binding_member(Parser& p, u32& bytes, u32& crc, bool& valid) {
+@@ -737,2 +760,23 @@ bool binding_member(Parser& p, u32& bytes, u32& crc, bool& valid) {
  
 +opxy::u8 hocket_data[hocket_bytes];
 +bool hocket_present, hocket_bound;
@@ -1381,27 +1387,39 @@ index c61a0cc..fc767ee 100644
 +}
 +
  // Any other owner's section: false only for malformed JSON; `ok` says it is an object
-@@ -874,2 +920,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
+@@ -874,2 +918,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
          // Only the last sections object counts.
 +        hocket_present=false;
          applies = false;
-@@ -884,2 +931,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
+@@ -884,2 +929,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
          const bool members = p.object([&](const Text& name) {
 +            if (sdk_hocket_load && name.is("open-xy.hocket")) return read_hocket(p);
              if (!section_name(name)) {
-@@ -913,2 +961,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
+@@ -913,2 +959,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
  void remap(unsigned char* project) {
 +    hocket_bound=hocket_present;
      for (u32 track = 0; track < 16; ++track) {
-@@ -929,2 +978,3 @@ void remap(unsigned char* project) {
+@@ -929,2 +976,3 @@ void remap(unsigned char* project) {
  bool apply_companion(void* project, const char* path) {
 +    hocket_bound=hocket_present=false;
      if (!companion_path(path, read_companion_path)) return false;
-@@ -962,2 +1012,3 @@ u32 sdk_project_load(void* project, const char* path) {
+@@ -947,2 +995,6 @@ bool apply_companion(void* project, const char* path) {
+ u32 sdk_project_save(void* project, const char* path) {
++    // Capture the matching Hocket settings while entering stock serialization.
++    // Later edits and project changes during file I/O belong to the next save.
++    opxy::u8 hocket[hocket_bytes];
++    const bool captured=path && sdk_hocket_save && sdk_hocket_save(project,hocket);
+     const u32 saved = save(project, path);
+@@ -950,3 +1002,3 @@ u32 sdk_project_save(void* project, const char* path) {
+     if (saved && path && companion_path(path, companion) && measure(path, chunk, bytes, crc))
+-        write_companion(project, bytes, crc);
++        write_companion(project, bytes, crc, captured?hocket:nullptr);
+     return saved;
+@@ -962,2 +1014,3 @@ u32 sdk_project_load(void* project, const char* path) {
          sdk_project_locks_loaded(project, apply_companion(project, path));
 +        if (sdk_hocket_load) sdk_hocket_load(project,hocket_bound?hocket_data:nullptr);
          sdk_project_loaded(path);
-@@ -966 +1017,26 @@ u32 sdk_project_load(void* project, const char* path) {
+@@ -966 +1019,26 @@ u32 sdk_project_load(void* project, const char* path) {
  }
 +
 +

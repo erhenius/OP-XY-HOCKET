@@ -89,7 +89,9 @@ static void check_editor_recall() {
     // Opening the capture/editor alone never changes the saved pattern.
     assert(editor_click(0,2) && a.grid.capture.record(68));
     u8 disk[hocket_settings::bytes], after[sizeof disk];
-    assert(sdk_hocket_save(first,disk) && edits>start);
+    // OS 1.2.1 passes its serialization snapshot into the save hook.
+    auto* snapshot=reinterpret_cast<const void*>(0x85b7e3d4u);
+    assert(sdk_hocket_save(snapshot,disk) && edits>start);
     assert(disk[0]==2 && disk[1]==17 && disk[2]==8 && disk[3]==22 && disk[4]==29);
     assert(disk[7]==143 && disk[15]==0 && disk[16]==0 && disk[17]==3);
     editor_init(0);
@@ -100,10 +102,14 @@ static void check_editor_recall() {
     assert(sdk_hocket_save(first,after) && !std::memcmp(after,disk,sizeof disk));
     activeProject=2;
     assert(!sdk_hocket_save(first,after));
+    assert(sdk_hocket_save(snapshot,after) && after[0]==0 && after[1]==3);
     assert(editor_turn(1,0,4,true));
     sdk_hocket_load(first,disk);
     activeProject=1;
     assert(sdk_hocket_save(first,after) && !std::memcmp(after,disk,sizeof disk));
+    activeProject=0;
+    assert(!sdk_hocket_save(snapshot,after));
+    activeProject=1;
     sdk_hocket_clear();
     std::puts("PASS: encoder edits, 15/16 routing, track isolation, reselect, discard live capture and restore.");
 }

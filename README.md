@@ -1,6 +1,6 @@
 # Hocket
 
-A note player for the **Teenage Engineering OP-XY**. Play a key or sequence a note on one instrument track and let up to two other tracks answer. Hocket can be chained across all 8 tracks! Each receiver plays its own instrument and can pass the phrase on. A bass can hold the root while a second track picks out an arpeggio and a third scatters the same notes into a fading tail.
+A note player for the **Teenage Engineering OP-XY**. Play a key or sequence a note on one instrument track and let up to two other tracks answer. Each receiver plays its own instrument and can pass the phrase on. A bass can hold the root while a second track picks out an arpeggio and a third scatters the same notes into a fading tail.
 
 ![A four-note arpeggio on T1 passes to T2 one sixteenth later and T3 three sixteenths later. The moving score shows when each instrument plays.](docs/hocket.gif)
 
@@ -49,4 +49,4 @@ python3 checks/clocked_playback.py --sdk /path/to/open-xy
 python3 checks/project_state.py --sdk /path/to/open-xy
 ```
 
-**0.1.21** includes the hardware-tested 0.1.20 player and a display correction that centers signed semitone values in the editor. The correction has been checked on the host.
+**0.1.22** fixes a project-recall bug that could leave both sends Off after reopening a project or restarting the XY. Set your routes and save once with this version. Projects that already contain valid Hocket settings can recall them directly. Older saves that omitted the settings need their routes entered again.

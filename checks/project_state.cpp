@@ -17,7 +17,14 @@ static_assert(sizeof(hocket_data)==hocket_settings::bytes,"companion size disagr
 alignas(4) static u8 buffers[2][0x54076c];
 static void* active=buffers[0];
 static u32 loading, deserializeResult=1, clears;
-static u32 stock_save(void*,const char* path) {
+static void* stockSnapshot=reinterpret_cast<void*>(0x85b7e3d4u);
+static void* activateDuringSave;
+static u32 stock_save(void* serialized,const char* path) {
+    assert(serialized==stockSnapshot);
+    if (activateDuringSave) {
+        active=activateDuringSave;
+        activateDuringSave=nullptr;
+    }
     FILE* f=std::fopen(path,"wb");
     assert(f); std::fputs(path,f); return std::fclose(f)==0;
 }
@@ -33,8 +40,7 @@ void sdk_project_locks_begin() {}
 void sdk_project_locks_byte(u32) {}
 void sdk_project_locks_loaded(void*,u32) {}
 bool sdk_hocket_save(const void* p,u8* dst) {
-    if (p!=active) return false;
-    setups.save(p,dst); return true;
+    return setups.snapshot(active,p,dst);
 }
 void sdk_hocket_load(const void* p,const u8* src) { setups.load(active,p,src); }
 void sdk_hocket_clear() { setups.clear(); }
@@ -76,9 +82,14 @@ int main() {
     for (u32 t=0;t<8;++t) set_track(t,1);
     auto& g=setups.track(active,0).grid;
     g.page=1; g.editEnabled=true; ++g.capture.session; g.capture.record(99);
-    setups.save(active,a); assert(sdk_project_save(active,"songA.xy"));
+    setups.save(active,a); assert(sdk_project_save(stockSnapshot,"songA.xy"));
     for (u32 t=0;t<8;++t) set_track(t,5);
-    setups.save(active,b); assert(sdk_project_save(active,"songB.xy"));
+    setups.save(active,b); assert(sdk_project_save(stockSnapshot,"songB.xy"));
+    // A completed load may publish a different live project during disk I/O.
+    // The saved companion must still describe the project whose save began.
+    setups.load(active,buffers[1],a); activateDuringSave=buffers[1];
+    assert(sdk_project_save(stockSnapshot,"mid-switch.xy")); check(a);
+    load_project("mid-switch.xy",a,b);
     load_project("songA.xy",b,a);
     auto& restored=setups.track(active,0).grid;
     assert(!restored.page && !restored.editEnabled && !restored.capture.armed());
@@ -87,7 +98,7 @@ int main() {
     // Failed stock load and an abandoned preload must preserve the active settings.
     deserializeResult=0; assert(!sdk_project_load(buffers[0],"songB.xy")); check(a);
     deserializeResult=1; assert(sdk_project_load(buffers[0],"songB.xy")); check(a);
-    assert(sdk_project_save(active,"workspace.xy"));
+    assert(sdk_project_save(stockSnapshot,"workspace.xy"));
     loading=1; assert(sdk_hocket_new(0,0,0)==11); check(a);
     loading=0; assert(sdk_hocket_random(0,0,0)==11); check(defaults); assert(clears==2);
     load_project("workspace.xy",defaults,a);
