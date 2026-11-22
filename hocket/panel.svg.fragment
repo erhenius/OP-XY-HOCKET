@@ -1,0 +1,188 @@
+<g id="hocket_panel">
+  <path d="M0 0 H480 V220 H0 Z" fill="#000000" stroke="#000000" stroke-width="0.8" transform="matrix(1 0 0 1 0 0)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" transform="matrix(1 0 0 1 30 29)">hocket</text>
+  <path d="M0 0 H420 V0.7 H0 Z" fill="#373737" stroke="#373737" stroke-width="0.8" transform="matrix(1 0 0 1 30 38)" />
+  <path d="M0 0 H420 V0.7 H0 Z" fill="#373737" stroke="#373737" stroke-width="0.8" transform="matrix(1 0 0 1 30 86)" />
+  <path d="M0 0 H420 V0.7 H0 Z" fill="#373737" stroke="#373737" stroke-width="0.8" transform="matrix(1 0 0 1 30 188)" />
+  <text font-size="12px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="pageName" transform="matrix(1 0 0 1 382 29)">playhead</text>
+  <path d="M0 0 H34 V12 H0 Z" fill="#eeeeee" stroke="#eeeeee" stroke-width="0.8" id="shiftBadge" transform="matrix(1 0 0 1 335 17)" />
+  <text font-size="8.6px" font-family="UniversNextPro-Light" fill="#090909" text-anchor="start" id="shiftBadgeText" transform="matrix(1 0 0 1 338 26)">SHIFT</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#090909" stroke="#aaaaaa" stroke-width="1" id="mainKnob0" transform="matrix(1 0 0 1 35 52)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="mainLabel0" transform="matrix(1 0 0 1 47 56)">Playhead</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainValue0" transform="matrix(1 0 0 1 72 77)">Arp</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#585858" stroke="#585858" stroke-width="1" id="mainKnob1" transform="matrix(1 0 0 1 141 52)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="mainLabel1" transform="matrix(1 0 0 1 153 56)">Transpose</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainValue1" transform="matrix(1 0 0 1 153 77)">0</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ababab" stroke="#ababab" stroke-width="1" id="mainKnob2" transform="matrix(1 0 0 1 247 52)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="mainLabel2" transform="matrix(1 0 0 1 259 56)">Rate</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainValue2" transform="matrix(1 0 0 1 259 77)">1/16</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ffffff" stroke="#ffffff" stroke-width="1" id="mainKnob3" transform="matrix(1 0 0 1 353 52)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="mainLabel3" transform="matrix(1 0 0 1 365 56)">Gate</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainValue3" transform="matrix(1 0 0 1 365 77)">50%</text>
+  <path d="M-8 -1 H8 V1 H-8 Z M-9 -2 H-6 V2 H-9 Z" fill="#eeeeee" stroke="#eeeeee" stroke-width="1" id="modeIcon0" transform="matrix(1 0 0 1 56 71)" />
+  <path d="M-9 2 H-4 V4 H-9 Z M-2 -5 H1 V-2 H-2 Z M2 2 H5 V4 H2 Z M6 -3 H8 V-1 H6 Z M10 1 H12 V3 H10 Z" fill="#eeeeee" stroke="#eeeeee" stroke-width="1" id="modeIcon1" transform="matrix(1 0 0 1 56 71)" />
+  <path d="M-9 3 H-4 V5 H-9 Z M-2 0 H3 V2 H-2 Z M5 -4 H10 V-2 H5 Z" fill="#eeeeee" stroke="#eeeeee" stroke-width="1" id="modeIcon2" transform="matrix(1 0 0 1 56 71)" />
+  <path d="M0 0 H43 V44 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" transform="matrix(1 0 0 1 30 119)" />
+  <text font-size="19px" font-family="UniversNextPro-Light" fill="#111111" text-anchor="middle" id="originTrack" transform="matrix(1 0 0 1 51 149)">T1</text>
+  <path d="M0 0 H159 V0.65 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="noteWire" transform="matrix(1 0 0 1 81 141)" />
+  <path d="M0 0 H18.6 V69 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_0" transform="matrix(1 0 0 1 82 104)" />
+  <path d="M0 0 H18.6 V69 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_1" transform="matrix(1 0 0 1 101 104)" />
+  <path d="M0 0 H18.6 V69 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_2" transform="matrix(1 0 0 1 120 104)" />
+  <path d="M0 0 H18.6 V69 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_3" transform="matrix(1 0 0 1 139 104)" />
+  <path d="M0 0 H18.6 V69 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_4" transform="matrix(1 0 0 1 161 104)" />
+  <path d="M0 0 H18.6 V69 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_5" transform="matrix(1 0 0 1 180 104)" />
+  <path d="M0 0 H18.6 V69 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_6" transform="matrix(1 0 0 1 199 104)" />
+  <path d="M0 0 H18.6 V69 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_7" transform="matrix(1 0 0 1 218 104)" />
+  <path d="M0 0 h1.1 M5 0 h1.1 M10 0 h1.1 M15 0 h1.1 M20 0 h1.1 M25 0 h1.1 M30 0 h1.1 M35 0 h1.1 M40 0 h1.1 M45 0 h1.1 M50 0 h1.1 M55 0 h1.1 M60 0 h1.1 M65 0 h1.1 M70 0 h1.1 M75 0 h1.1 M80 0 h1.1 M85 0 h1.1 M90 0 h1.1 M95 0 h1.1 M100 0 h1.1 M105 0 h1.1 M110 0 h1.1 M115 0 h1.1 M120 0 h1.1 M125 0 h1.1 M130 0 h1.1 M135 0 h1.1 M140 0 h1.1 M145 0 h1.1 M150 0 h1.1" fill="none" stroke="#585858" stroke-width="0.8" id="zeroLine" transform="matrix(1 0 0 1 82 148)" />
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_8" transform="matrix(1 0 0 1 85.2 147)" />
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_9" transform="matrix(1 0 0 1 85.2 147)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi0" transform="matrix(1 0 0 1 91 142)">0</text>
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_10" transform="matrix(1 0 0 1 104.2 147)" />
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_11" transform="matrix(1 0 0 1 104.2 147)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi1" transform="matrix(1 0 0 1 110 142)">0</text>
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_12" transform="matrix(1 0 0 1 123.2 147)" />
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_13" transform="matrix(1 0 0 1 123.2 147)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi2" transform="matrix(1 0 0 1 129 142)">0</text>
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_14" transform="matrix(1 0 0 1 142.2 147)" />
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_15" transform="matrix(1 0 0 1 142.2 147)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi3" transform="matrix(1 0 0 1 148 142)">0</text>
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_16" transform="matrix(1 0 0 1 164.2 147)" />
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_17" transform="matrix(1 0 0 1 164.2 147)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi4" transform="matrix(1 0 0 1 170 142)">0</text>
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_18" transform="matrix(1 0 0 1 183.2 147)" />
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_19" transform="matrix(1 0 0 1 183.2 147)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi5" transform="matrix(1 0 0 1 189 142)">0</text>
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_20" transform="matrix(1 0 0 1 202.2 147)" />
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_21" transform="matrix(1 0 0 1 202.2 147)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi6" transform="matrix(1 0 0 1 208 142)">0</text>
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_22" transform="matrix(1 0 0 1 221.2 147)" />
+  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_23" transform="matrix(1 0 0 1 221.2 147)" />
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi7" transform="matrix(1 0 0 1 227 142)">0</text>
+  <path d="M0 0 H4 V4 H0 Z" fill="#ff4949" stroke="#ff4949" stroke-width="0.8" id="cursor" transform="matrix(1 0 0 1 89 167)" />
+  <path d="M0 0 H10 V0.7 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="stem" transform="matrix(1 0 0 1 239 141)" />
+  <path d="M249 141 L272 117 H354 M349 114 L354 117 L349 120" fill="none" stroke="#414141" stroke-width="1.1" id="branchOff0" transform="matrix(1 0 0 1 0 0)" />
+  <path d="M249 141 L272 117 H354 M349 114 L354 117 L349 120" fill="none" stroke="#aaaaaa" stroke-width="1.1" id="branchOn0" transform="matrix(1 0 0 1 0 0)" />
+  <path d="M0 0 H44 V27 H0 Z" fill="#202020" stroke="#777777" stroke-width="0.8" id="destBox0" transform="matrix(1 0 0 1 361 104)" />
+  <path d="M0 0 H44 V27 H0 Z" fill="#202020" stroke="#ff4949" stroke-width="0.8" id="destEdit0" transform="matrix(1 0 0 1 361 104)" />
+  <text font-size="14px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="dest0" transform="matrix(1 0 0 1 372 122)">Off</text>
+  <text font-size="12px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="delay0" transform="matrix(1 0 0 1 423 121)">1/16</text>
+  <path d="M0 0 H18 V12 H0 Z" fill="#000000" stroke="#000000" stroke-width="0.8" id="knockout0" transform="matrix(1 0 0 1 329 111)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#090909" stroke="#aaaaaa" stroke-width="1" id="routeKnob0" transform="matrix(1 0 0 1 340 117)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#585858" stroke="#585858" stroke-width="1" id="routeKnob1" transform="matrix(1 0 0 1 414 117)" />
+  <path d="M249 141 L272 164 H354 M349 161 L354 164 L349 167" fill="none" stroke="#414141" stroke-width="1.1" id="branchOff1" transform="matrix(1 0 0 1 0 0)" />
+  <path d="M249 141 L272 164 H354 M349 161 L354 164 L349 167" fill="none" stroke="#aaaaaa" stroke-width="1.1" id="branchOn1" transform="matrix(1 0 0 1 0 0)" />
+  <path d="M0 0 H44 V27 H0 Z" fill="#202020" stroke="#777777" stroke-width="0.8" id="destBox1" transform="matrix(1 0 0 1 361 151)" />
+  <path d="M0 0 H44 V27 H0 Z" fill="#202020" stroke="#ff4949" stroke-width="0.8" id="destEdit1" transform="matrix(1 0 0 1 361 151)" />
+  <text font-size="14px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="dest1" transform="matrix(1 0 0 1 372 169)">Off</text>
+  <text font-size="12px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="delay1" transform="matrix(1 0 0 1 423 168)">1/16</text>
+  <path d="M0 0 H18 V12 H0 Z" fill="#000000" stroke="#000000" stroke-width="0.8" id="knockout1" transform="matrix(1 0 0 1 329 158)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ababab" stroke="#ababab" stroke-width="1" id="routeKnob2" transform="matrix(1 0 0 1 340 164)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ffffff" stroke="#ffffff" stroke-width="1" id="routeKnob3" transform="matrix(1 0 0 1 414 164)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#090909" stroke="#aaaaaa" stroke-width="1" id="mainPress0" transform="matrix(1 0 0 1 42 202)" />
+  <path d="M-6.3 -6.4 Q-10.7 0 -6.3 6.4 M6.3 -6.4 Q10.7 0 6.3 6.4" fill="none" stroke="#cdcdcd" stroke-width="1" id="mainPress0Br" transform="matrix(1 0 0 1 42 202)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#585858" stroke="#585858" stroke-width="1" id="mainPress1" transform="matrix(1 0 0 1 148 202)" />
+  <path d="M-6.3 -6.4 Q-10.7 0 -6.3 6.4 M6.3 -6.4 Q10.7 0 6.3 6.4" fill="none" stroke="#cdcdcd" stroke-width="1" id="mainPress1Br" transform="matrix(1 0 0 1 148 202)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ababab" stroke="#ababab" stroke-width="1" id="mainPress2" transform="matrix(1 0 0 1 254 202)" />
+  <path d="M-6.3 -6.4 Q-10.7 0 -6.3 6.4 M6.3 -6.4 Q10.7 0 6.3 6.4" fill="none" stroke="#cdcdcd" stroke-width="1" id="mainPress2Br" transform="matrix(1 0 0 1 254 202)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ffffff" stroke="#ffffff" stroke-width="1" id="mainPress3" transform="matrix(1 0 0 1 360 202)" />
+  <path d="M-6.3 -6.4 Q-10.7 0 -6.3 6.4 M6.3 -6.4 Q10.7 0 6.3 6.4" fill="none" stroke="#cdcdcd" stroke-width="1" id="mainPress3Br" transform="matrix(1 0 0 1 360 202)" />
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainFoot0" transform="matrix(1 0 0 1 55 206)"> </text>
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainFoot1" transform="matrix(1 0 0 1 161 206)"> </text>
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainFoot2" transform="matrix(1 0 0 1 267 206)"> </text>
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainFoot3" transform="matrix(1 0 0 1 373 206)"> </text>
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="hocket_text" transform="matrix(1 0 0 1 30 206)"> </text>
+  <path d="M0 0 H480 V220 H0 Z" fill="#000000" stroke="#000000" stroke-width="0.8" id="editorBack" transform="matrix(1 0 0 1 0 0)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="editorMachine" transform="matrix(1 0 0 1 30 29)">hocket</text>
+  <text font-size="12px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="editorTitle" transform="matrix(1 0 0 1 365 29)">arp editor</text>
+  <path d="M0 0 H420 V0.7 H0 Z" fill="#373737" stroke="#373737" stroke-width="0.8" id="editorRule0" transform="matrix(1 0 0 1 30 38)" />
+  <path d="M0 0 H420 V0.7 H0 Z" fill="#373737" stroke="#373737" stroke-width="0.8" id="editorRule1" transform="matrix(1 0 0 1 30 188)" />
+  <text font-size="15px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="editorHeading" transform="matrix(1 0 0 1 30 64)">Semitones</text>
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="editorHint" transform="matrix(1 0 0 1 345 63)">Hold Shift for 5-8</text>
+  <path d="M0 0 H34 V12 H0 Z" fill="#eeeeee" stroke="#eeeeee" stroke-width="0.8" id="editorShift" transform="matrix(1 0 0 1 298 51)" />
+  <text font-size="8.6px" font-family="UniversNextPro-Light" fill="#090909" text-anchor="start" id="editorShiftText" transform="matrix(1 0 0 1 301 60)">SHIFT</text>
+  <path d="M0 0 H48 V21 H0 Z" fill="#1c1c1c" stroke="#373737" stroke-width="0.8" id="tab0" transform="matrix(1 0 0 1 30 83)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#090909" stroke="#aaaaaa" stroke-width="0.8" id="tabSel0" transform="matrix(1 0 0 1 30 83)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="count0" transform="matrix(1 0 0 1 54 99)">1</text>
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="countSel0" transform="matrix(1 0 0 1 54 99)">1</text>
+  <path d="M0 0 H48 V37 H0 Z" fill="#090909" stroke="#626262" stroke-width="0.8" id="cell0" transform="matrix(1 0 0 1 30 108)" />
+  <path d="M0 0 H48 V37 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" id="cellOn0" transform="matrix(1 0 0 1 30 108)" />
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#101010" text-anchor="middle" id="ink0" transform="matrix(1 0 0 1 54 133)">0</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="dim0" transform="matrix(1 0 0 1 54 133)">0</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#090909" stroke="#ff4949" stroke-width="1" id="bankKnob0" transform="matrix(1 0 0 1 54 167)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#1c1c1c" stroke="#373737" stroke-width="0.8" id="tab1" transform="matrix(1 0 0 1 82 83)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#585858" stroke="#aaaaaa" stroke-width="0.8" id="tabSel1" transform="matrix(1 0 0 1 82 83)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="count1" transform="matrix(1 0 0 1 106 99)">2</text>
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="countSel1" transform="matrix(1 0 0 1 106 99)">2</text>
+  <path d="M0 0 H48 V37 H0 Z" fill="#090909" stroke="#626262" stroke-width="0.8" id="cell1" transform="matrix(1 0 0 1 82 108)" />
+  <path d="M0 0 H48 V37 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" id="cellOn1" transform="matrix(1 0 0 1 82 108)" />
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#101010" text-anchor="middle" id="ink1" transform="matrix(1 0 0 1 106 133)">0</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="dim1" transform="matrix(1 0 0 1 106 133)">0</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#585858" stroke="#ff4949" stroke-width="1" id="bankKnob1" transform="matrix(1 0 0 1 106 167)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#1c1c1c" stroke="#373737" stroke-width="0.8" id="tab2" transform="matrix(1 0 0 1 134 83)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#ababab" stroke="#373737" stroke-width="0.8" id="tabSel2" transform="matrix(1 0 0 1 134 83)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="count2" transform="matrix(1 0 0 1 158 99)">3</text>
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#121212" text-anchor="middle" id="countSel2" transform="matrix(1 0 0 1 158 99)">3</text>
+  <path d="M0 0 H48 V37 H0 Z" fill="#090909" stroke="#626262" stroke-width="0.8" id="cell2" transform="matrix(1 0 0 1 134 108)" />
+  <path d="M0 0 H48 V37 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" id="cellOn2" transform="matrix(1 0 0 1 134 108)" />
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#101010" text-anchor="middle" id="ink2" transform="matrix(1 0 0 1 158 133)">0</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="dim2" transform="matrix(1 0 0 1 158 133)">0</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ababab" stroke="#ff4949" stroke-width="1" id="bankKnob2" transform="matrix(1 0 0 1 158 167)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#1c1c1c" stroke="#373737" stroke-width="0.8" id="tab3" transform="matrix(1 0 0 1 186 83)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#ffffff" stroke="#373737" stroke-width="0.8" id="tabSel3" transform="matrix(1 0 0 1 186 83)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="count3" transform="matrix(1 0 0 1 210 99)">4</text>
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#121212" text-anchor="middle" id="countSel3" transform="matrix(1 0 0 1 210 99)">4</text>
+  <path d="M0 0 H48 V37 H0 Z" fill="#090909" stroke="#626262" stroke-width="0.8" id="cell3" transform="matrix(1 0 0 1 186 108)" />
+  <path d="M0 0 H48 V37 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" id="cellOn3" transform="matrix(1 0 0 1 186 108)" />
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#101010" text-anchor="middle" id="ink3" transform="matrix(1 0 0 1 210 133)">0</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="dim3" transform="matrix(1 0 0 1 210 133)">0</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ffffff" stroke="#ff4949" stroke-width="1" id="bankKnob3" transform="matrix(1 0 0 1 210 167)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#1c1c1c" stroke="#373737" stroke-width="0.8" id="tab4" transform="matrix(1 0 0 1 242 83)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#090909" stroke="#aaaaaa" stroke-width="0.8" id="tabSel4" transform="matrix(1 0 0 1 242 83)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="count4" transform="matrix(1 0 0 1 266 99)">5</text>
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="countSel4" transform="matrix(1 0 0 1 266 99)">5</text>
+  <path d="M0 0 H48 V37 H0 Z" fill="#090909" stroke="#626262" stroke-width="0.8" id="cell4" transform="matrix(1 0 0 1 242 108)" />
+  <path d="M0 0 H48 V37 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" id="cellOn4" transform="matrix(1 0 0 1 242 108)" />
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#101010" text-anchor="middle" id="ink4" transform="matrix(1 0 0 1 266 133)">0</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="dim4" transform="matrix(1 0 0 1 266 133)">0</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#090909" stroke="#ff4949" stroke-width="1" id="bankKnob4" transform="matrix(1 0 0 1 266 167)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#1c1c1c" stroke="#373737" stroke-width="0.8" id="tab5" transform="matrix(1 0 0 1 294 83)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#585858" stroke="#aaaaaa" stroke-width="0.8" id="tabSel5" transform="matrix(1 0 0 1 294 83)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="count5" transform="matrix(1 0 0 1 318 99)">6</text>
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="countSel5" transform="matrix(1 0 0 1 318 99)">6</text>
+  <path d="M0 0 H48 V37 H0 Z" fill="#090909" stroke="#626262" stroke-width="0.8" id="cell5" transform="matrix(1 0 0 1 294 108)" />
+  <path d="M0 0 H48 V37 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" id="cellOn5" transform="matrix(1 0 0 1 294 108)" />
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#101010" text-anchor="middle" id="ink5" transform="matrix(1 0 0 1 318 133)">0</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="dim5" transform="matrix(1 0 0 1 318 133)">0</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#585858" stroke="#ff4949" stroke-width="1" id="bankKnob5" transform="matrix(1 0 0 1 318 167)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#1c1c1c" stroke="#373737" stroke-width="0.8" id="tab6" transform="matrix(1 0 0 1 346 83)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#ababab" stroke="#373737" stroke-width="0.8" id="tabSel6" transform="matrix(1 0 0 1 346 83)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="count6" transform="matrix(1 0 0 1 370 99)">7</text>
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#121212" text-anchor="middle" id="countSel6" transform="matrix(1 0 0 1 370 99)">7</text>
+  <path d="M0 0 H48 V37 H0 Z" fill="#090909" stroke="#626262" stroke-width="0.8" id="cell6" transform="matrix(1 0 0 1 346 108)" />
+  <path d="M0 0 H48 V37 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" id="cellOn6" transform="matrix(1 0 0 1 346 108)" />
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#101010" text-anchor="middle" id="ink6" transform="matrix(1 0 0 1 370 133)">0</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="dim6" transform="matrix(1 0 0 1 370 133)">0</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ababab" stroke="#ff4949" stroke-width="1" id="bankKnob6" transform="matrix(1 0 0 1 370 167)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#1c1c1c" stroke="#373737" stroke-width="0.8" id="tab7" transform="matrix(1 0 0 1 398 83)" />
+  <path d="M0 0 H48 V21 H0 Z" fill="#ffffff" stroke="#373737" stroke-width="0.8" id="tabSel7" transform="matrix(1 0 0 1 398 83)" />
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="count7" transform="matrix(1 0 0 1 422 99)">8</text>
+  <text font-size="13px" font-family="UniversNextPro-Light" fill="#121212" text-anchor="middle" id="countSel7" transform="matrix(1 0 0 1 422 99)">8</text>
+  <path d="M0 0 H48 V37 H0 Z" fill="#090909" stroke="#626262" stroke-width="0.8" id="cell7" transform="matrix(1 0 0 1 398 108)" />
+  <path d="M0 0 H48 V37 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" id="cellOn7" transform="matrix(1 0 0 1 398 108)" />
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#101010" text-anchor="middle" id="ink7" transform="matrix(1 0 0 1 422 133)">0</text>
+  <text font-size="17px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="middle" id="dim7" transform="matrix(1 0 0 1 422 133)">0</text>
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ffffff" stroke="#ff4949" stroke-width="1" id="bankKnob7" transform="matrix(1 0 0 1 422 167)" />
+  <path d="M0 0 H4 V4 H0 Z" fill="#ff4949" stroke="#ff4949" stroke-width="0.8" id="editorCursor" transform="matrix(1 0 0 1 52 149)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#090909" stroke="#aaaaaa" stroke-width="1" id="gridPress0" transform="matrix(1 0 0 1 42 202)" />
+  <path d="M-6.3 -6.4 Q-10.7 0 -6.3 6.4 M6.3 -6.4 Q10.7 0 6.3 6.4" fill="none" stroke="#cdcdcd" stroke-width="1" id="gridPress0Br" transform="matrix(1 0 0 1 42 202)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#585858" stroke="#585858" stroke-width="1" id="gridPress1" transform="matrix(1 0 0 1 148 202)" />
+  <path d="M-6.3 -6.4 Q-10.7 0 -6.3 6.4 M6.3 -6.4 Q10.7 0 6.3 6.4" fill="none" stroke="#cdcdcd" stroke-width="1" id="gridPress1Br" transform="matrix(1 0 0 1 148 202)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ababab" stroke="#ababab" stroke-width="1" id="gridPress2" transform="matrix(1 0 0 1 254 202)" />
+  <path d="M-6.3 -6.4 Q-10.7 0 -6.3 6.4 M6.3 -6.4 Q10.7 0 6.3 6.4" fill="none" stroke="#cdcdcd" stroke-width="1" id="gridPress2Br" transform="matrix(1 0 0 1 254 202)" />
+  <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ffffff" stroke="#ffffff" stroke-width="1" id="gridPress3" transform="matrix(1 0 0 1 360 202)" />
+  <path d="M-6.3 -6.4 Q-10.7 0 -6.3 6.4 M6.3 -6.4 Q10.7 0 6.3 6.4" fill="none" stroke="#cdcdcd" stroke-width="1" id="gridPress3Br" transform="matrix(1 0 0 1 360 202)" />
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="gridFoot0" transform="matrix(1 0 0 1 55 206)"> </text>
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="gridFoot1" transform="matrix(1 0 0 1 161 206)"> </text>
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="gridFoot2" transform="matrix(1 0 0 1 267 206)"> </text>
+  <text font-size="11px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="gridFoot3" transform="matrix(1 0 0 1 373 206)"> </text>
+</g>

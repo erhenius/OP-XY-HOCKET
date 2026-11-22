@@ -1,0 +1,1508 @@
+diff --git a/sdk/platform/opxy-1.2.1/hocket_panel.hpp b/sdk/platform/opxy-1.2.1/hocket_panel.hpp
+new file mode 100644
+index 0000000..dfbc398
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_panel.hpp
+@@ -0,0 +1,401 @@
++#pragma once
++namespace hocket_panel {
++enum Node {
++    pageName,
++    shiftBadge,
++    shiftBadgeText,
++    mainKnob0,
++    mainLabel0,
++    mainValue0,
++    mainKnob1,
++    mainLabel1,
++    mainValue1,
++    mainKnob2,
++    mainLabel2,
++    mainValue2,
++    mainKnob3,
++    mainLabel3,
++    mainValue3,
++    modeIcon0,
++    modeIcon1,
++    modeIcon2,
++    originTrack,
++    noteWire,
++    lane0,
++    lane1,
++    lane2,
++    lane3,
++    lane4,
++    lane5,
++    lane6,
++    lane7,
++    zeroLine,
++    stepOn0,
++    stepOff0,
++    semi0,
++    stepOn1,
++    stepOff1,
++    semi1,
++    stepOn2,
++    stepOff2,
++    semi2,
++    stepOn3,
++    stepOff3,
++    semi3,
++    stepOn4,
++    stepOff4,
++    semi4,
++    stepOn5,
++    stepOff5,
++    semi5,
++    stepOn6,
++    stepOff6,
++    semi6,
++    stepOn7,
++    stepOff7,
++    semi7,
++    cursor,
++    stem,
++    branchOff0,
++    branchOn0,
++    destBox0,
++    destEdit0,
++    dest0,
++    delay0,
++    knockout0,
++    routeKnob0,
++    routeKnob1,
++    branchOff1,
++    branchOn1,
++    destBox1,
++    destEdit1,
++    dest1,
++    delay1,
++    knockout1,
++    routeKnob2,
++    routeKnob3,
++    mainPress0,
++    mainPress0Br,
++    mainPress1,
++    mainPress1Br,
++    mainPress2,
++    mainPress2Br,
++    mainPress3,
++    mainPress3Br,
++    mainFoot0,
++    mainFoot1,
++    mainFoot2,
++    mainFoot3,
++    statusLine,
++    editorBack,
++    editorMachine,
++    editorTitle,
++    editorRule0,
++    editorRule1,
++    editorHeading,
++    editorHint,
++    editorShift,
++    editorShiftText,
++    tab0,
++    tabSel0,
++    count0,
++    countSel0,
++    cell0,
++    cellOn0,
++    ink0,
++    dim0,
++    bankKnob0,
++    tab1,
++    tabSel1,
++    count1,
++    countSel1,
++    cell1,
++    cellOn1,
++    ink1,
++    dim1,
++    bankKnob1,
++    tab2,
++    tabSel2,
++    count2,
++    countSel2,
++    cell2,
++    cellOn2,
++    ink2,
++    dim2,
++    bankKnob2,
++    tab3,
++    tabSel3,
++    count3,
++    countSel3,
++    cell3,
++    cellOn3,
++    ink3,
++    dim3,
++    bankKnob3,
++    tab4,
++    tabSel4,
++    count4,
++    countSel4,
++    cell4,
++    cellOn4,
++    ink4,
++    dim4,
++    bankKnob4,
++    tab5,
++    tabSel5,
++    count5,
++    countSel5,
++    cell5,
++    cellOn5,
++    ink5,
++    dim5,
++    bankKnob5,
++    tab6,
++    tabSel6,
++    count6,
++    countSel6,
++    cell6,
++    cellOn6,
++    ink6,
++    dim6,
++    bankKnob6,
++    tab7,
++    tabSel7,
++    count7,
++    countSel7,
++    cell7,
++    cellOn7,
++    ink7,
++    dim7,
++    bankKnob7,
++    editorCursor,
++    gridPress0,
++    gridPress0Br,
++    gridPress1,
++    gridPress1Br,
++    gridPress2,
++    gridPress2Br,
++    gridPress3,
++    gridPress3Br,
++    gridFoot0,
++    gridFoot1,
++    gridFoot2,
++    gridFoot3,
++    nodeCount
++};
++struct Binding { const char* name; bool text; };
++static const Binding bindings[nodeCount]={
++    {"pageName",true},
++    {"shiftBadge",false},
++    {"shiftBadgeText",true},
++    {"mainKnob0",false},
++    {"mainLabel0",true},
++    {"mainValue0",true},
++    {"mainKnob1",false},
++    {"mainLabel1",true},
++    {"mainValue1",true},
++    {"mainKnob2",false},
++    {"mainLabel2",true},
++    {"mainValue2",true},
++    {"mainKnob3",false},
++    {"mainLabel3",true},
++    {"mainValue3",true},
++    {"modeIcon0",false},
++    {"modeIcon1",false},
++    {"modeIcon2",false},
++    {"originTrack",true},
++    {"noteWire",false},
++    {"hocket_dot_0",false},
++    {"hocket_dot_1",false},
++    {"hocket_dot_2",false},
++    {"hocket_dot_3",false},
++    {"hocket_dot_4",false},
++    {"hocket_dot_5",false},
++    {"hocket_dot_6",false},
++    {"hocket_dot_7",false},
++    {"zeroLine",false},
++    {"hocket_dot_8",false},
++    {"hocket_dot_9",false},
++    {"semi0",true},
++    {"hocket_dot_10",false},
++    {"hocket_dot_11",false},
++    {"semi1",true},
++    {"hocket_dot_12",false},
++    {"hocket_dot_13",false},
++    {"semi2",true},
++    {"hocket_dot_14",false},
++    {"hocket_dot_15",false},
++    {"semi3",true},
++    {"hocket_dot_16",false},
++    {"hocket_dot_17",false},
++    {"semi4",true},
++    {"hocket_dot_18",false},
++    {"hocket_dot_19",false},
++    {"semi5",true},
++    {"hocket_dot_20",false},
++    {"hocket_dot_21",false},
++    {"semi6",true},
++    {"hocket_dot_22",false},
++    {"hocket_dot_23",false},
++    {"semi7",true},
++    {"cursor",false},
++    {"stem",false},
++    {"branchOff0",false},
++    {"branchOn0",false},
++    {"destBox0",false},
++    {"destEdit0",false},
++    {"dest0",true},
++    {"delay0",true},
++    {"knockout0",false},
++    {"routeKnob0",false},
++    {"routeKnob1",false},
++    {"branchOff1",false},
++    {"branchOn1",false},
++    {"destBox1",false},
++    {"destEdit1",false},
++    {"dest1",true},
++    {"delay1",true},
++    {"knockout1",false},
++    {"routeKnob2",false},
++    {"routeKnob3",false},
++    {"mainPress0",false},
++    {"mainPress0Br",false},
++    {"mainPress1",false},
++    {"mainPress1Br",false},
++    {"mainPress2",false},
++    {"mainPress2Br",false},
++    {"mainPress3",false},
++    {"mainPress3Br",false},
++    {"mainFoot0",true},
++    {"mainFoot1",true},
++    {"mainFoot2",true},
++    {"mainFoot3",true},
++    {"hocket_text",true},
++    {"editorBack",false},
++    {"editorMachine",true},
++    {"editorTitle",true},
++    {"editorRule0",false},
++    {"editorRule1",false},
++    {"editorHeading",true},
++    {"editorHint",true},
++    {"editorShift",false},
++    {"editorShiftText",true},
++    {"tab0",false},
++    {"tabSel0",false},
++    {"count0",true},
++    {"countSel0",true},
++    {"cell0",false},
++    {"cellOn0",false},
++    {"ink0",true},
++    {"dim0",true},
++    {"bankKnob0",false},
++    {"tab1",false},
++    {"tabSel1",false},
++    {"count1",true},
++    {"countSel1",true},
++    {"cell1",false},
++    {"cellOn1",false},
++    {"ink1",true},
++    {"dim1",true},
++    {"bankKnob1",false},
++    {"tab2",false},
++    {"tabSel2",false},
++    {"count2",true},
++    {"countSel2",true},
++    {"cell2",false},
++    {"cellOn2",false},
++    {"ink2",true},
++    {"dim2",true},
++    {"bankKnob2",false},
++    {"tab3",false},
++    {"tabSel3",false},
++    {"count3",true},
++    {"countSel3",true},
++    {"cell3",false},
++    {"cellOn3",false},
++    {"ink3",true},
++    {"dim3",true},
++    {"bankKnob3",false},
++    {"tab4",false},
++    {"tabSel4",false},
++    {"count4",true},
++    {"countSel4",true},
++    {"cell4",false},
++    {"cellOn4",false},
++    {"ink4",true},
++    {"dim4",true},
++    {"bankKnob4",false},
++    {"tab5",false},
++    {"tabSel5",false},
++    {"count5",true},
++    {"countSel5",true},
++    {"cell5",false},
++    {"cellOn5",false},
++    {"ink5",true},
++    {"dim5",true},
++    {"bankKnob5",false},
++    {"tab6",false},
++    {"tabSel6",false},
++    {"count6",true},
++    {"countSel6",true},
++    {"cell6",false},
++    {"cellOn6",false},
++    {"ink6",true},
++    {"dim6",true},
++    {"bankKnob6",false},
++    {"tab7",false},
++    {"tabSel7",false},
++    {"count7",true},
++    {"countSel7",true},
++    {"cell7",false},
++    {"cellOn7",false},
++    {"ink7",true},
++    {"dim7",true},
++    {"bankKnob7",false},
++    {"editorCursor",false},
++    {"gridPress0",false},
++    {"gridPress0Br",false},
++    {"gridPress1",false},
++    {"gridPress1Br",false},
++    {"gridPress2",false},
++    {"gridPress2Br",false},
++    {"gridPress3",false},
++    {"gridPress3Br",false},
++    {"gridFoot0",true},
++    {"gridFoot1",true},
++    {"gridFoot2",true},
++    {"gridFoot3",true},
++};
++static const Node mainKnobIds[]={mainKnob0, mainKnob1, mainKnob2, mainKnob3};
++static const Node mainLabelIds[]={mainLabel0, mainLabel1, mainLabel2, mainLabel3};
++static const Node mainValueIds[]={mainValue0, mainValue1, mainValue2, mainValue3};
++static const Node modeIconIds[]={modeIcon0, modeIcon1, modeIcon2};
++static const Node laneIds[]={lane0, lane1, lane2, lane3, lane4, lane5, lane6, lane7};
++static const Node stepOnIds[]={stepOn0, stepOn1, stepOn2, stepOn3, stepOn4, stepOn5, stepOn6, stepOn7};
++static const Node stepOffIds[]={stepOff0, stepOff1, stepOff2, stepOff3, stepOff4, stepOff5, stepOff6, stepOff7};
++static const Node semiIds[]={semi0, semi1, semi2, semi3, semi4, semi5, semi6, semi7};
++static const Node branchOffIds[]={branchOff0, branchOff1};
++static const Node branchOnIds[]={branchOn0, branchOn1};
++static const Node destBoxIds[]={destBox0, destBox1};
++static const Node destEditIds[]={destEdit0, destEdit1};
++static const Node destIds[]={dest0, dest1};
++static const Node delayIds[]={delay0, delay1};
++static const Node knockoutIds[]={knockout0, knockout1};
++static const Node routeKnobIds[]={routeKnob0, routeKnob1, routeKnob2, routeKnob3};
++static const Node mainPressIds[]={mainPress0, mainPress1, mainPress2, mainPress3};
++static const Node mainPressBracketIds[]={mainPress0Br, mainPress1Br, mainPress2Br, mainPress3Br};
++static const Node mainFootIds[]={mainFoot0, mainFoot1, mainFoot2, mainFoot3};
++static const Node editorRuleIds[]={editorRule0, editorRule1};
++static const Node tabIds[]={tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7};
++static const Node tabSelIds[]={tabSel0, tabSel1, tabSel2, tabSel3, tabSel4, tabSel5, tabSel6, tabSel7};
++static const Node countIds[]={count0, count1, count2, count3, count4, count5, count6, count7};
++static const Node countSelIds[]={countSel0, countSel1, countSel2, countSel3, countSel4, countSel5, countSel6, countSel7};
++static const Node cellIds[]={cell0, cell1, cell2, cell3, cell4, cell5, cell6, cell7};
++static const Node cellOnIds[]={cellOn0, cellOn1, cellOn2, cellOn3, cellOn4, cellOn5, cellOn6, cellOn7};
++static const Node inkIds[]={ink0, ink1, ink2, ink3, ink4, ink5, ink6, ink7};
++static const Node dimIds[]={dim0, dim1, dim2, dim3, dim4, dim5, dim6, dim7};
++static const Node bankKnobIds[]={bankKnob0, bankKnob1, bankKnob2, bankKnob3, bankKnob4, bankKnob5, bankKnob6, bankKnob7};
++static const Node gridPressIds[]={gridPress0, gridPress1, gridPress2, gridPress3};
++static const Node gridPressBracketIds[]={gridPress0Br, gridPress1Br, gridPress2Br, gridPress3Br};
++static const Node gridFootIds[]={gridFoot0, gridFoot1, gridFoot2, gridFoot3};
++}
+diff --git a/sdk/platform/opxy-1.2.1/hocket_probe.cpp b/sdk/platform/opxy-1.2.1/hocket_probe.cpp
+new file mode 100644
+index 0000000..5dda2bc
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_probe.cpp
+@@ -0,0 +1,218 @@
++#include "hocket_probe.hpp"
++#include "hocket_probe_voice.hpp"
++#include "player_activity.hpp"
++#include "players.hpp"
++#include "stock.hpp"
++
++using namespace opxy;
++using platform::stock;
++using hprobe::Tag;
++extern "C" u32 sdk_voice_ticks() __asm__("sdk_voice_ticks");
++namespace {
++struct Mark { u32 owner,start; u16 serial; u8 source,fade; };
++Mark marks[8][128];
++void* stepping;
++Tag sending, receiving;
++hprobe::Watches watches;
++u32 sent[8];                         // GUI role
++u32 received[8], rendered[8], lastOwner[8]; // audio role
++bool sawNote[8];
++struct Snapshot {
++    u32 track, token, requestedAt, acknowledgedAt, acknowledgedToken;
++    u32 owner, counts;
++    bool valid;
++};
++Snapshot gui;
++const u32 pollInterval = 764; // Same clock as the player's quarter-second stall detector.
++const u32 reportType = 0xb5, requestSize = 9, replySize = 16;
++typedef u32 Enqueue(void*,u32,const u8*,u32,u32,u32,u32);
++typedef u32 Note(u32,u32,u32,u32,u32,u32,u32,u32,u32,u32,u32,u32);
++
++platform::PlayerChord* records(void* object) {
++    return reinterpret_cast<platform::PlayerChord*>(static_cast<u8*>(object)+0x10c);
++}
++Tag tone_tag(u32 dest,u32 pitch,const u8* tone) {
++    if (!stepping || dest>=8 || pitch>=128 || static_cast<u32*>(stepping)[1]!=dest) return {};
++    const platform::Address lo=reinterpret_cast<platform::Address>(records(stepping));
++    const platform::Address addr=reinterpret_cast<platform::Address>(tone);
++    if (addr<lo+4 || addr>=lo+8*sizeof(platform::PlayerChord)) return {};
++    const u32 offset=static_cast<u32>(addr-lo)%sizeof(platform::PlayerChord);
++    if (offset>=64 || (offset&7)!=4 || tone[0]!=pitch) return {};
++    const Mark& m=marks[dest][pitch];
++    const u16 serial=tone[2]|(u16(tone[3])<<8);
++    if (!serial || serial!=m.serial) return {};
++    return {m.owner,m.source,static_cast<u8>(dest),m.fade,m.start};
++}
++Tag for_track(u32 track) { return receiving.dest==track ? receiving : Tag{}; }
++u32 read32(const u8* p) {
++    return u32(p[0]) | (u32(p[1])<<8) | (u32(p[2])<<16) | (u32(p[3])<<24);
++}
++void write32(u8* p,u32 v) {
++    for (u32 i=0;i<4;++i) p[i]=static_cast<u8>(v>>(8*i));
++}
++void send_report(const u8* p,u32 size) {
++    // Stock's 0xb5 status sender at 8d4d699c uses this queue and addressing.
++    stock<Enqueue>(0x11a00ec0)(platform::at<void>(0x841460b4),reportType,p,size,0,255,255);
++}
++bool report(const u8* m) {
++    const u8* p=m+4;
++    if (m[2]!=reportType) return false;
++    if (m[3]==13 && p[0]=='H' && p[1]=='K' && p[2]==1 && p[3]<8 && p[4]=='F'
++        && p[9]<8 && p[10]>=1 && p[10]<=6 && read32(p+5)) {
++        if (!stock<u32()>(0x8d5c3eac)()) {
++            const u32 age=p[11]|(u32(p[12])<<8);
++            watches.release({read32(p+5),p[3],p[9],p[10],sdk_voice_ticks()-age});
++        }
++        return true;
++    }
++    if (m[3]!=requestSize && m[3]!=replySize) return false;
++    // Stock 1.2.1 handles subcommands 0..3. Hocket owns only this versioned request/reply format.
++    if (p[0]!=0x48 || p[1]!='K' || p[2]!=1 || p[3]>=8 || p[4]!='S') return false;
++    const u32 t=p[3], token=read32(p+5);
++    if (!token) return false;
++    const bool onGui=stock<u32()>(0x8d5c3eac)()!=0;
++    if (m[3]==requestSize && !onGui) {
++        alignas(4) u8 reply[replySize];
++        __builtin_memcpy(reply,p,requestSize);
++        reply[9]=received[t]%100; reply[10]=rendered[t]%100;
++        reply[11]=sawNote[t];
++        write32(reply+12,lastOwner[t]);
++        send_report(reply,sizeof reply);
++    } else if (m[3]==replySize && onGui && gui.track==t && token==gui.token
++               && p[9]<100 && p[10]<100 && p[11]<=1 && (read32(p+12)>>16)<=8) {
++        gui.counts=(u32(p[9])<<8)|(u32(p[10])<<16)|(u32(p[11])<<24);
++        gui.owner=read32(p+12);
++        gui.acknowledgedAt=gui.requestedAt;
++        gui.acknowledgedToken=token;
++        gui.valid=true;
++    }
++    return true;
++}
++}
++
++extern "C" {
++u32 sdk_hprobe_emit(u32,u32,u32,u32,u32,u32,u32,u32,u32,u32,u32,u32,const u8*) __asm__("sdk_hprobe_emit");
++u32 sdk_hprobe_queue(void*,u32,const u8*,u32,u32,u32,u32) __asm__("sdk_hprobe_queue");
++u32 sdk_hprobe_dispatch(void*,const u8*) __asm__("sdk_hprobe_dispatch");
++void* sdk_hprobe_fresh(u8*,const u8*,u32) __asm__("sdk_hprobe_fresh");
++void sdk_hprobe_pending(void*,u32) __asm__("sdk_hprobe_pending");
++void* sdk_hprobe_promote(u8*,const u8*,u32) __asm__("sdk_hprobe_promote");
++u32 sdk_hprobe_render(void*,i32*) __asm__("sdk_hprobe_render");
++
++void sdk_hprobe_release(u32 source,u32 dest,u32 owner,u32 fade,u32 start) {
++    if (source>=8 || dest>=8 || !owner || !fade || fade>6) return;
++    // Stock can still be holding an unconsumed note when the gate closes.
++    for (Mark& m:marks[dest]) {
++        if (m.owner==owner && m.source==source) { m.fade=static_cast<u8>(fade); m.start=start; }
++    }
++    const u32 age=hprobe::wire_age(sdk_voice_ticks(),start);
++    alignas(4) u8 p[13]={'H','K',1,static_cast<u8>(source),'F'};
++    write32(p+5,owner);
++    p[9]=static_cast<u8>(dest); p[10]=static_cast<u8>(fade);
++    p[11]=static_cast<u8>(age); p[12]=static_cast<u8>(age>>8);
++    send_report(p,sizeof p);
++}
++void sdk_hprobe_stamp(void* object,u32 dest,u32 pitch,u32 source,u32 owner,u32 fade,u32 start) {
++    if (!owner || dest>=8 || source>=8 || pitch>=128) return;
++    auto* r=records(object);
++    const u32 held=*reinterpret_cast<const u32*>(static_cast<u8*>(object)+0x34c);
++    if (held>8) return;
++    for (u32 i=0;i<held;++i) {
++        if (r[i].root!=pitch || r[i].count!=1) continue;
++        auto& t=r[i].tones[0];
++        if (t.pitch!=pitch || t.delay!=0) continue;
++        Mark& m=marks[dest][pitch];
++        if (!++m.serial) ++m.serial;
++        m.start=start; m.fade=fade<=6 ? static_cast<u8>(fade) : 0;
++        m.owner=owner; m.source=static_cast<u8>(source);
++        t.unused[0]=static_cast<u8>(m.serial);
++        t.unused[1]=static_cast<u8>(m.serial>>8);
++        return;
++    }
++}
++void sdk_hprobe_step(void* object) {
++    void* previous=stepping;
++    stepping=object;
++    stock<void(void*)>(platform::kMaestroStep)(object);
++    stepping=previous;
++}
++u32 sdk_hprobe_emit(u32 ctx,u32 track,u32 pitch,u32 a,u32 b,u32 vel,u32 d,
++                    u32 e,u32 f,u32 g,u32 h,u32 j,const u8* tone) {
++    const Tag previous=sending;
++    sending=tone_tag(track,pitch,tone);
++    const u32 result=stock<Note>(0x8d595738)(ctx,track,pitch,a,b,vel,d,e,f,g,h,j);
++    sending=previous;
++    return result;
++}
++u32 sdk_hprobe_queue(void* queue,u32 type,const u8* p,u32 n,u32 flags,u32 src,u32 dst) {
++    auto send=stock<Enqueue>(0x11a00ec0);
++    if (!sending.owner || type!=0x98 || n!=8 || p[0]!=sending.dest)
++        return send(queue,type,p,n,flags,src,dst);
++    alignas(4) u8 extended[20];
++    __builtin_memcpy(extended,p,8);
++    const u32 size=hprobe::encode(extended,sending,sending.fade ? sdk_voice_ticks() : 0);
++    ++sent[sending.dest];
++    return send(queue,type,extended,size,flags,src,dst);
++}
++u32 sdk_hprobe_dispatch(void* context,const u8* message) {
++    if (report(message)) return 1;
++    if (message[2]==0x98 && message[3]>=8 && message[4]<8) sawNote[message[4]]=true;
++    const Tag previous=receiving;
++    receiving=hprobe::decode(message,message[2]==0x98 && message[3]==20 ? sdk_voice_ticks() : 0);
++    // A decay-phase attack also supplies the release if an earlier notice was lost.
++    if (receiving.owner && receiving.fade) watches.release(receiving);
++    if (receiving.owner) ++received[receiving.dest];
++    const u32 result=stock<u32(void*,const u8*)>(0x8d5b1260)(context,message);
++    receiving=previous;
++    return result;
++}
++void* sdk_hprobe_fresh(u8* dst,const u8* src,u32 n) {
++    // Stock initializes active state then mirrors it into pending.
++    if (n==13) watches.bind(dst-0x64,for_track(src[1]),true);
++    return stock<void*(void*,const void*,u32)>(0x040230c4)(dst,src,n);
++}
++void sdk_hprobe_pending(void* voice,u32 track) {
++    watches.bind(voice,for_track(track),false);
++}
++void* sdk_hprobe_promote(u8* dst,const u8* src,u32 n) {
++    if (n==13) watches.promote(dst-0x54);
++    return stock<void*(void*,const void*,u32)>(0x040230c4)(dst,src,n);
++}
++u32 sdk_hprobe_render(void* voice,i32* output) {
++    const u32 index=watches.find(voice);
++    const bool fading=index<watches.size && watches.entries[index].active.fade;
++    const hprobe::Block block=watches.begin(index,fading ? sdk_voice_ticks() : 0);
++    const Tag t=block.tag;
++    const u32 result=stock<u32(void*,i32*)>(0x8d51bbaa)(voice,output);
++    block.apply(output);
++    if (result && t.owner) watches.remove(watches.find(voice));
++    if (t.owner && block.first) {
++        lastOwner[t.dest]=((u32(t.source)+1)<<16)|(t.owner&0xffff);
++        ++rendered[t.dest];
++    }
++    return result;
++}
++void sdk_hprobe_poll(u32 track,u32 now) {
++    if (track>=8) return;
++    const u32 age=now-gui.requestedAt;
++    if (track!=gui.track || now-gui.acknowledgedAt>=4*pollInterval) gui.valid=false;
++    if (gui.token && track==gui.track && age<pollInterval) return;
++    // Retry an outstanding token so a slow reply can still match. Rotate after
++    // a long absence, a track change, or a successful exchange.
++    if (!gui.token || track!=gui.track || age>=4*pollInterval || gui.acknowledgedToken==gui.token) {
++        if (!++gui.token) ++gui.token;
++    }
++    gui.track=track;
++    gui.requestedAt=now;
++    alignas(4) u8 request[requestSize]={0x48,'K',1,static_cast<u8>(track),'S'};
++    write32(request+5,gui.token);
++    send_report(request,sizeof request);
++}
++u32 sdk_hprobe_last(u32 dest) {
++    return gui.valid && dest==gui.track ? gui.owner : 0;
++}
++u32 sdk_hprobe_status(u32 dest) {
++    if (dest>=8) return 0;
++    return sent[dest]%100 | (gui.valid && dest==gui.track ? (1u<<25)|gui.counts : 0);
++}
++}
+diff --git a/sdk/platform/opxy-1.2.1/hocket_probe.hpp b/sdk/platform/opxy-1.2.1/hocket_probe.hpp
+new file mode 100644
+index 0000000..20cc0ce
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_probe.hpp
+@@ -0,0 +1,10 @@
++#pragma once
++#include <opxy/types.hpp>
++extern "C" {
++void sdk_hprobe_poll(opxy::u32,opxy::u32) __asm__("sdk_hprobe_poll");
++void sdk_hprobe_step(void*) __asm__("sdk_hprobe_step");
++void sdk_hprobe_release(opxy::u32,opxy::u32,opxy::u32,opxy::u32,opxy::u32) __asm__("sdk_hprobe_release");
++void sdk_hprobe_stamp(void*,opxy::u32,opxy::u32,opxy::u32,opxy::u32,opxy::u32,opxy::u32) __asm__("sdk_hprobe_stamp");
++opxy::u32 sdk_hprobe_last(opxy::u32) __asm__("sdk_hprobe_last");
++opxy::u32 sdk_hprobe_status(opxy::u32) __asm__("sdk_hprobe_status");
++}
+diff --git a/sdk/platform/opxy-1.2.1/hocket_probe_hooks.s b/sdk/platform/opxy-1.2.1/hocket_probe_hooks.s
+new file mode 100644
+index 0000000..79ef1ba
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_probe_hooks.s
+@@ -0,0 +1,46 @@
++.include "sdk/platform/opxy-1.2.1/hook.inc"
++.section .text
++.align 2
++/* Stock emitter, immediately before its twelve-argument note-on. Pass P5,
++ * the exact tone's pitch-byte pointer, as a thirteenth argument. FP+8 is
++ * the original caller SP. All nine original stack arguments are replayed. */
++.global sdk_hprobe_emit_hook
++.type sdk_hprobe_emit_hook, STT_FUNC
++sdk_hprobe_emit_hook:
++    LINK 52;
++    R3 = [FP + 20];
++    [SP + 12] = R3;
++    R3 = [FP + 24];
++    [SP + 16] = R3;
++    R3 = [FP + 28];
++    [SP + 20] = R3;
++    R3 = [FP + 32];
++    [SP + 24] = R3;
++    R3 = [FP + 36];
++    [SP + 28] = R3;
++    R3 = [FP + 40];
++    [SP + 32] = R3;
++    R3 = [FP + 44];
++    [SP + 36] = R3;
++    R3 = [FP + 48];
++    [SP + 40] = R3;
++    R3 = [FP + 52];
++    [SP + 44] = R3;
++    [SP + 48] = P5;
++    CALL sdk_hprobe_emit;
++    UNLINK;
++    RTS;
++.size sdk_hprobe_emit_hook, .-sdk_hprobe_emit_hook
++
++/* This write commits the pending velocity on both stock reuse branches. */
++.global sdk_hprobe_pending_hook
++.type sdk_hprobe_pending_hook, STT_FUNC
++sdk_hprobe_pending_hook:
++    HOOK_SAVE
++    R0 = P5;
++    R1 = R5;
++    CALL sdk_hprobe_pending;
++    HOOK_RESTORE
++    B[P5 + 0x64] = R6;
++    RTS;
++.size sdk_hprobe_pending_hook, .-sdk_hprobe_pending_hook
+diff --git a/sdk/platform/opxy-1.2.1/hocket_probe_voice.hpp b/sdk/platform/opxy-1.2.1/hocket_probe_voice.hpp
+new file mode 100644
+index 0000000..b3415d8
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_probe_voice.hpp
+@@ -0,0 +1,111 @@
++#pragma once
++#include <opxy/q31.hpp>
++namespace hprobe {
++using namespace opxy;
++// Index zero passes the voice through. Other indices follow the Spray menu.
++const u32 frames[]={0,44100,88200,132300,220500,11025,22050};
++const u32 gainStep[]={0,2147483647u/44100,2147483647u/88200,2147483647u/132300,
++                      2147483647u/220500,2147483647u/11025,2147483647u/22050};
++struct Tag {
++    u32 owner;
++    u8 source,dest,fade;
++    u32 start; // Local board clock. Only elapsed ticks cross the wire.
++};
++inline u32 wire_age(u32 now,u32 start) {
++    const u32 age=now-start;
++    return age<65535 ? age : 65535;
++}
++inline Tag decode(const u8* m,u32 now=0) {
++    if (m[2]!=0x98 || (m[3]!=16 && m[3]!=20)) return {};
++    const u8* p=m+4;
++    if (p[0]>=8 || p[8]!='H' || p[9]!='K' || p[11]>=8) return {};
++    const u32 id=u32(p[12])|(u32(p[13])<<8)|(u32(p[14])<<16)|(u32(p[15])<<24);
++    if (m[3]==16 && p[10]==1) return {id,p[11],p[0],0,0};
++    if (m[3]!=20 || p[10]!=2 || !p[16] || p[16]>6 || p[17]) return {};
++    return {id,p[11],p[0],p[16],now-(p[18]|(u32(p[19])<<8))};
++}
++inline u32 encode(u8* p,Tag t,u32 now=0) {
++    p[8]='H'; p[9]='K'; p[10]=t.fade?2:1; p[11]=t.source;
++    for (u32 i=0;i<4;++i) p[12+i]=static_cast<u8>(t.owner>>(8*i));
++    if (!t.fade) return 16;
++    const u32 age=wire_age(now,t.start);
++    p[16]=t.fade; p[17]=0; p[18]=static_cast<u8>(age); p[19]=static_cast<u8>(age>>8);
++    return 20;
++}
++struct Block {
++    Tag tag;
++    u32 elapsed;
++    bool first;
++    void apply(i32* out) const {
++        if (!tag.fade) return;
++        const u32 total=frames[tag.fade],step=gainStep[tag.fade];
++        u32 left=elapsed<total ? total-elapsed : 0;
++        u32 gain=left*step;
++        for (u32 i=0;i<64;++i,out+=2) {
++            if (!left) { out[0]=0; out[1]=0; continue; }
++            if (left!=total) {
++                out[0]=q31::multiply(out[0],static_cast<i32>(gain));
++                out[1]=q31::multiply(out[1],static_cast<i32>(gain));
++            }
++            --left;
++            gain-=step;
++        }
++    }
++};
++struct Watches {
++    struct Entry { const void* voice; Tag active,pending; u32 nextFrame; bool mirror,seen; };
++    Entry entries[27];
++    u32 size;
++    u32 find(const void* voice) const {
++        u32 i=0;
++        while (i<size && entries[i].voice!=voice) ++i;
++        return i;
++    }
++    void remove(u32 i) { if (i<size) entries[i]=entries[--size]; }
++    void bind(const void* voice,Tag t,bool fresh) {
++        u32 i=find(voice);
++        if (i==size) {
++            if (!t.owner || size==27) return;
++            entries[size++]={voice,{},{},0,false,false};
++        }
++        Entry& e=entries[i];
++        if (fresh) { e.active=t; e.nextFrame=0; e.seen=false; }
++        e.pending=t; e.mirror=fresh;
++        if (!e.active.owner && !e.pending.owner) remove(i);
++    }
++    void promote(const void* voice) {
++        const u32 i=find(voice);
++        if (i==size) return;
++        Entry& e=entries[i];
++        if (!e.mirror) { e.nextFrame=0; e.seen=false; }
++        e.active=e.pending; e.pending={}; e.mirror=false;
++        if (!e.active.owner) remove(i);
++    }
++    static void release_tag(Tag& voice,Tag t) {
++        if (voice.owner==t.owner && voice.source==t.source && voice.dest==t.dest && !voice.fade) {
++            voice.fade=t.fade; voice.start=t.start;
++        }
++    }
++    void release(Tag t) {
++        for (u32 i=0;i<size;++i) {
++            release_tag(entries[i].active,t);
++            release_tag(entries[i].pending,t);
++        }
++    }
++    Block begin(u32 i,u32 now) {
++        if (i>=size) return {};
++        Entry& e=entries[i];
++        Block block={e.active,0,!e.seen};
++        e.seen=true;
++        if (e.active.fade) {
++            const u32 total=frames[e.active.fade],age=now-e.active.start;
++            // 44.1 kHz, 400 MHz timer divided by 2^17. Clamp before multiplying.
++            u32 sample=age>=15260 ? total : (age*59190u)>>12;
++            if (sample<e.nextFrame) sample=e.nextFrame;
++            block.elapsed=sample;
++            e.nextFrame=sample>=total ? total : sample+64;
++        }
++        return block;
++    }
++};
++}
+diff --git a/sdk/platform/opxy-1.2.1/hocket_project_format.hpp b/sdk/platform/opxy-1.2.1/hocket_project_format.hpp
+new file mode 100644
+index 0000000..d38924c
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_project_format.hpp
+@@ -0,0 +1,2 @@
++#pragma once
++namespace hocket_format { constexpr unsigned hocket_bytes=128, hocket_reserve=240; }
+diff --git a/sdk/platform/opxy-1.2.1/hocket_renderer.hpp b/sdk/platform/opxy-1.2.1/hocket_renderer.hpp
+index f5e49b1..22c515b 100644
+--- a/sdk/platform/opxy-1.2.1/hocket_renderer.hpp
++++ b/sdk/platform/opxy-1.2.1/hocket_renderer.hpp
+@@ -15,20 +15,54 @@ static const char* pitch_text(opxy::i32 n) {
+ }
+-#include "hocket_grid_view.hpp"
++#include "hocket_panel.hpp"
+ struct Renderer {
+-    typedef opxy::u32 u32;
+-    typedef opxy::i32 i32;
+-    typedef opxy::screen::Base Base;
+-    typedef opxy::screen::Leaf Leaf;
+-    enum { texts=18, paths=24 };
++    using u32=opxy::u32;
++    using i32=opxy::i32;
++    using Node=hocket_panel::Node;
++    using Base=opxy::screen::Base;
++    using Leaf=opxy::screen::Leaf;
++    struct Item { Leaf* node; i32 x,y; const char* previous; };
+     struct Object {
+         Base base;
+-        Leaf* labels[texts];
+-        Leaf* shapes[paths];
+-        i32 home[paths];
+-        const char* previous[texts];
+-        GridView editor;
+-        Leaf* diagnostic;
+-        u32 lit, lastDiagnostic;
+-        u32 watchedTrack, watchedClock, changedAt;
+-        bool watchingClock;
++        Item items[hocket_panel::nodeCount];
++        bool editorOpen;
++        void show(Node id,bool visible,i32 dx=0,i32 dy=0) {
++            Item& item=items[id];
++            if (!item.node) return;
++            const u32 at[]={6,7};
++            const i32 values[]={item.x+(visible?dx:640)*1024,item.y+dy*1024};
++            opxy::screen::set_words(item.node,at,values);
++        }
++        void text(Node id,const char* value) {
++            Item& item=items[id];
++            if (item.node && item.previous!=value) {
++                opxy::screen::set_text(item.node,value);
++                item.previous=value;
++            }
++        }
++        // Stock measures the current string when drawing a middle-anchored leaf.
++        // Anchor both colour variants to the box, including after a bank change.
++        void centre_in_cell(Node id,Node box) {
++            Item& label=items[id];
++            if (!label.node || !items[box].node) return;
++            opxy::screen::anchor_middle(label.node);
++            label.x=items[box].x+24*1024; // 48-unit grid box
++            const u32 at[]={6};
++            const i32 value[]={label.x};
++            opxy::screen::set_words(label.node,at,value);
++        }
++        void footer(u32 knob,bool editor,const char* label) {
++            using namespace hocket_panel;
++            const bool visible=label && *label;
++            show(editor?gridPressIds[knob]:mainPressIds[knob],visible);
++            show(editor?gridPressBracketIds[knob]:mainPressBracketIds[knob],visible);
++            const Node id=editor?gridFootIds[knob]:mainFootIds[knob];
++            show(id,visible);
++            if (visible) text(id,label);
++        }
++        void editor(bool open) {
++            if (open==editorOpen) return;
++            for (u32 i=hocket_panel::editorBack;i<hocket_panel::nodeCount;++i)
++                show(static_cast<Node>(i),open);
++            editorOpen=open;
++        }
+     };
+@@ -36,110 +70,108 @@ struct Renderer {
+         using namespace opxy::screen;
++        using namespace hocket_panel;
+         clear(o);
+         if (!o->base.svg) return;
+-        static const char* const names[texts]={"page","playhead","rate","gate","origin","dest_a","delay_a","dest_b","delay_b","hint","semi_1","semi_2","semi_3","arp_send","arp_repeat","semi_0","pitch_label","pitch_value"};
+-        for (u32 i=0;i<texts;++i)
+-            o->labels[i]=text_node(find(&o->base,names[i]));
+-        for (u32 i=0;i<paths;++i) {
+-            char id[]="hocket_dot_00";
+-            if (i<10) { id[11]='0'+i; id[12]=0; }
+-            else { id[11]='0'+i/10; id[12]='0'+i%10; }
+-            PathNode* p=path_node(find(&o->base,id));
+-            if (p) { o->shapes[i]=&p->leaf; o->home[i]=p->leaf.matrix[6]; }
++        for (u32 i=0;i<nodeCount;++i) {
++            const Binding& binding=bindings[i];
++            void* raw=find(&o->base,binding.name);
++            Item& item=o->items[i];
++            if (binding.text) item.node=text_node(raw);
++            else if (PathNode* p=path_node(raw)) item.node=&p->leaf;
++            if (item.node) { item.x=item.node->matrix[6]; item.y=item.node->matrix[7]; }
++        }
++        for (u32 i=0;i<8;++i) {
++            o->centre_in_cell(inkIds[i],cellOnIds[i]);
++            o->centre_in_cell(dimIds[i],cellOnIds[i]);
+         }
+-        o->editor.init(&o->base);
+-        o->diagnostic=text_node(find(&o->base,"release_status"));
+-        o->lastDiagnostic=~0u;
+-        o->lit=~0u;
++        o->editorOpen=true;
++        o->editor(false);
+     }
+-    static void frame(Object* o, i32) {
++    static void edit(Object& o,const hocket::Grid& grid,bool shift,bool spray,u32 cursor) {
++        using namespace hocket_panel;
++        const bool armed=grid.capture.armed();
++        hocket::Take take={};
++        if (armed && !grid.capture.read(take)) return;
++        static const char* const counts[]={"0 / 8","1 / 8","2 / 8","3 / 8","4 / 8","5 / 8","6 / 8","7 / 8","8 / 8"};
++        o.text(editorTitle,armed?"capture":(spray?"spray editor":"arp editor"));
++        o.text(editorHeading,armed?"Play notes":(grid.editEnabled?"Steps on/off":"Semitones"));
++        o.text(editorHint,armed?counts[take.count]:(shift?"5-8":"Hold Shift for 5-8"));
++        o.show(editorShift,shift && !armed); o.show(editorShiftText,shift && !armed);
++        const u32 mask=armed?take.mask():grid.mask();
++        for (u32 i=0;i<8;++i) {
++            const bool on=(mask&(1u<<i))!=0;
++            const bool selected=!armed && (i>=4)==shift;
++            o.show(tabSelIds[i],selected); o.show(countSelIds[i],selected);
++            o.show(countIds[i],!selected); o.show(bankKnobIds[i],selected);
++            o.show(cellOnIds[i],on); o.show(inkIds[i],on); o.show(dimIds[i],!on && !armed);
++            const char* value=pitch_text(armed?take.pitch(i):grid.pitch(i));
++            o.text(on?inkIds[i]:dimIds[i],value);
++        }
++        const u32 slot=cursor?cursor-1:0;
++        o.show(editorCursor,!armed && cursor && cursor<=8,slot*52+(slot>=4?4:0));
++        o.footer(0,true,armed?"":(grid.shuffle?"Shuffle":(spray?"Scatter":"Forward")));
++        o.footer(1,true,armed?"":"Playhead");
++        o.footer(2,true,armed?"Keep":"Capture");
++        o.footer(3,true,armed?"Cancel":(grid.editEnabled?"Edit on/off":"Edit pitch"));
++    }
++    static void frame(Object* o,i32) {
+         using namespace opxy::screen;
+         using namespace hocket;
++        using namespace hocket_panel;
+         const u32 track=selected_track();
++        if (track>=8 || !o->base.svg) return;
+         void* object=opxy::platform::player_object(track,hocket_player_vtable);
+-        if (!object || track>=8 || !o->base.svg) return;
+-        const auto c=opxy::platform::player_controls(object);
++        if (!object) return;
++        const auto c=authored_controls(object);
++        const Grid& grid=settings(track).grid;
+         const State& s=state(object);
+-        const Grid& grid=grids[track];
+-        const bool rests=(c.clicks[3]&1)!=0;
+-        const Playhead head=playhead(c);
+-        const bool spray=head==Playhead::spray;
+-        o->editor.frame(grid,rests,s.cursor,spray);
+-        if (grid.page) { opxy::screen::draw(&o->base); return; }
+-        const bool arp=head!=Playhead::note;
+-        static const char* const tails[]={"1 s","2 s","3 s","5 s","250 ms","500 ms"};
+-        const u32 a=choice(c.shift_value[0],9), b=choice(c.shift_value[2],9);
+-        const char* hint=probe_text(s.probe);
+-        static const char* const messages[][8]={
+-            {"send pending / T1", "send pending / T2", "send pending / T3", "send pending / T4", "send pending / T5", "send pending / T6", "send pending / T7", "send pending / T8"},
+-            {"sent to T1", "sent to T2", "sent to T3", "sent to T4", "sent to T5", "sent to T6", "sent to T7", "sent to T8"},
+-            {"no Hocket at T1", "no Hocket at T2", "no Hocket at T3", "no Hocket at T4", "no Hocket at T5", "no Hocket at T6", "no Hocket at T7", "no Hocket at T8"},
+-            {"received from T1", "received from T2", "received from T3", "received from T4", "received from T5", "received from T6", "received from T7", "received from T8"},
+-        };
+-        switch(s.route) {
+-            case Route::off: break;
+-            case Route::pending: hint=messages[0][s.routeTrack]; break;
+-            case Route::delivered: hint=messages[1][s.routeTrack]; break;
+-            case Route::missing: hint=messages[2][s.routeTrack]; break;
+-            case Route::received: hint=messages[3][s.routeTrack]; break;
+-            case Route::full: hint="Hocket queue full"; break;
++        const Playhead mode=playhead(c);
++        const bool note=mode==Playhead::note, spray=mode==Playhead::spray, shift=c.shift;
++        o->editor(grid.page!=0);
++        if (grid.page) { edit(*o,grid,shift,spray,s.cursor); opxy::screen::draw(&o->base); return; }
++        o->text(pageName,shift?"handoffs":"playhead");
++        o->show(shiftBadge,shift); o->show(shiftBadgeText,shift);
++        const char* values[]={note?"Note":(spray?"Spray":"Arp"),pitch_text(grid.transpose),
++                              rates[choice(c.value[2],4)],note?"Held":gates[choice(c.value[3],4)]};
++        for (u32 i=0;i<4;++i) {
++            const bool visible=i==0 || i==3 || (i==1?spray:!note);
++            o->show(mainLabelIds[i],visible); o->show(mainValueIds[i],visible);
++            o->show(mainKnobIds[i],visible && !shift && !(i==3 && note));
++            if (visible) o->text(mainValueIds[i],values[i]);
+         }
+-        if (c.shift && s.eventCount) {
+-            const u32 now=sdk_voice_ticks();
+-            if (!o->watchingClock || track!=o->watchedTrack || s.clock!=o->watchedClock) {
+-                o->watchedTrack=track;
+-                o->watchedClock=s.clock;
+-                o->changedAt=now;
+-            }
+-            o->watchingClock=true;
+-            // 764 counter units is about a quarter second at 400 MHz.
+-            if (now-o->changedAt>=764) hint="pending / clock stalled";
+-        } else o->watchingClock=false;
+-        const char* const values[texts]={
+-            c.shift?"shift / handoffs":(arp?(rests?"playhead / Rest":"playhead / Skip"):"playhead"),spray?"Spray":(arp?"Arp":"Note"),arp?rates[choice(c.value[2],4)]:"-",arp?gates[choice(c.value[3],4)]:"held",
+-            tracks[track+1], tracks[a],a?delays[choice(c.shift_value[1],11)]:"",tracks[b],b?delays[choice(c.shift_value[3],11)]:"",
+-            hint,
+-            arp && (grid.mask()&2)?pitch_text(grid.pitch(1)):"",arp && (grid.mask()&4)?pitch_text(grid.pitch(2)):"",arp && (grid.mask()&8)?pitch_text(grid.pitch(3)):"",
+-            arp && !c.shift ? ((c.clicks[0]&1)?"Steps":"Root") : "",
+-            arp && !c.shift ? (spray?tails[grid.tail]:((c.clicks[2]&1)?"Repeat":"Once")) : "",
+-            arp?((grid.mask()&1)?pitch_text(grid.pitch(0)):""):"0",
+-            spray?"Transpose":"Pitch",spray?pitch_text(grid.transpose):"Slots 1-8"
+-        };
+-        for (u32 i=0;i<texts;++i) {
+-            if (!o->labels[i] || o->previous[i]==values[i]) continue;
+-            set_text(o->labels[i],values[i]);
+-            o->previous[i]=values[i];
++        for (u32 i=0;i<3;++i) o->show(modeIconIds[i],i==static_cast<u32>(mode));
++        o->text(originTrack,tracks[track+1]); o->show(noteWire,note); o->show(zeroLine,!note);
++        for (u32 i=0;i<8;++i) {
++            const bool enabled=(grid.mask()&(1u<<i))!=0;
++            const i32 pitch=grid.pitch(i);
++            // Keep the extreme +/-48 labels inside the lane at native resolution.
++            const i32 dy=-(pitch*5/8);
++            o->show(laneIds[i],!note); o->show(stepOnIds[i],!note && enabled,0,dy);
++            o->show(stepOffIds[i],!note && !enabled,0,dy); o->show(semiIds[i],!note,0,dy);
++            if (!note) o->text(semiIds[i],pitch_text(pitch));
+         }
+-        if (o->diagnostic) {
+-            u32 status=0;
+-            if (c.shift) {
+-                opxy::player::Display d={};
+-                opxy::platform::player_output(object,d);
+-                const bool stock=(d.played[0]|d.played[1]|d.played[2]|d.played[3])!=0;
+-                status=0x1000u|(static_cast<u32>(s.keyCount)<<5)|(s.sounding<<1)|stock;
+-            }
+-            if (status!=o->lastDiagnostic) {
+-                char line[]="keys 0   voices 0   stock 0";
+-                line[5]+=(status>>5)&15;
+-                line[16]+=(status>>1)&15;
+-                line[26]+=status&1;
+-                set_text(o->diagnostic,status?line:"");
+-                o->lastDiagnostic=status;
+-            }
+-        }
+-        const u32 cursor=s.cursor;
+-        u32 lit=arp?(grid.mask()&15u):1u;
+-        if (cursor>=1 && cursor<=(arp?4u:1u)) lit|=1u<<(3+cursor);
+-        lit|=c.shift ? (0x3fu<<12) : (0xfu<<8);
+-        if (arp && !c.shift) lit|=15u<<20;
+-        if (a) lit|=1u<<18;
+-        if (b) lit|=1u<<19;
+-        if (o->lit!=lit) {
+-            for (u32 i=0;i<paths;++i) {
+-                if (!o->shapes[i] || !((lit^o->lit)&(1u<<i))) continue;
+-                const u32 at[1]={6};
+-                const i32 value[1]={o->home[i]+((lit & (1u<<i))?0:(1024<<10))};
+-                set_words(o->shapes[i],at,value);
+-            }
+-            o->lit=lit;
++        const u32 slot=s.cursor?s.cursor-1:0;
++        o->show(cursor,!note && s.cursor && s.cursor<=8,slot*19+(slot>=4?3:0));
++        for (u32 i=0;i<2;++i) {
++            const u32 target=choice(c.shift_value[2*i],9);
++            o->show(branchOnIds[i],target); o->show(branchOffIds[i],!target);
++            o->show(destEditIds[i],shift && target);
++            o->show(knockoutIds[i],shift);
++            o->show(routeKnobIds[2*i],shift); o->show(routeKnobIds[2*i+1],shift);
++            o->text(destIds[i],tracks[target]); o->text(delayIds[i],target?delays[choice(c.shift_value[2*i+1],delayChoices)]:"");
+         }
++        static const char* const tails[]={"Decay  1 s","Decay  2 s","Decay  3 s","Decay  5 s","Decay  250 ms","Decay  500 ms"};
++        o->footer(0,false,!note && !shift?((c.clicks[0]&1)?"Steps":"Root"):"");
++        o->footer(1,false,shift?"":"Semitones");
++        o->footer(2,false,note || shift?"":(spray?tails[grid.tail]:((c.clicks[2]&1)?"Repeat":"Once")));
++        o->footer(3,false,note || shift?"":((c.clicks[3]&1)?"Rest":"Skip"));
++        static const char* const received[]={"received from T1","received from T2","received from T3","received from T4","received from T5","received from T6","received from T7","received from T8"};
++        static const char* const sent[]={"sent to T1","sent to T2","sent to T3","sent to T4","sent to T5","sent to T6","sent to T7","sent to T8"};
++        static const char* const missing[]={"no Hocket at T1","no Hocket at T2","no Hocket at T3","no Hocket at T4","no Hocket at T5","no Hocket at T6","no Hocket at T7","no Hocket at T8"};
++        const char* status="";
++        if (s.route==Route::received) status=received[s.routeTrack];
++        if (s.route==Route::delivered) status=sent[s.routeTrack];
++        if (s.route==Route::missing) status=missing[s.routeTrack];
++        if (s.route==Route::full) status="Hocket queue full";
++        if (s.route==Route::pending) status="handoff pending";
++        o->text(statusLine,status); o->show(statusLine,shift);
+         opxy::screen::draw(&o->base);
+diff --git a/sdk/platform/opxy-1.2.1/hocket_settings.hpp b/sdk/platform/opxy-1.2.1/hocket_settings.hpp
+new file mode 100644
+index 0000000..03eee79
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_settings.hpp
+@@ -0,0 +1,72 @@
++// Included after the machine's Grid definition by its native player adapter.
++#pragma once
++#include "player_controls.hpp"
++namespace hocket_settings {
++using namespace opxy;
++enum { tracks=8, width=16, bytes=tracks*width };
++struct Track {
++    hocket::Grid grid;
++    i32 routeWords[4];
++    u8 flags;  // The three main-page encoder toggles, one bit per knob.
++    static u32 count(u32 k) { return k&1 ? hocket::delayChoices : 9u; }
++    static i32 centre(u32 k,u32 index) {
++        const u32 step=k&1 ? 0x7fffffffu/hocket::delayChoices : 0x7fffffffu/9u;
++        return index*step+step/2;
++    }
++    i32 route(u32 k) const { return routeWords[k]?routeWords[k]:centre(k,k&1?3:0); }
++    void apply(player::Controls& c) const {
++        for (u32 k=0;k<4;++k) {
++            c.shift_value[k]=route(k);
++            c.clicks[k]=(flags>>k)&1u;
++        }
++    }
++    void encode(u8* out) const {
++        for (u32 k=0;k<4;++k) out[k]=player::choice(route(k),count(k));
++        out[4]=flags|(grid.shuffle?16:0);
++        out[5]=grid.tail;
++        out[6]=grid.transpose+24;
++        out[7]=grid.mask();
++        for (u32 k=0;k<8;++k) out[8+k]=grid.pitch(k)+48;
++    }
++    static bool valid(const u8* in) {
++        for (u32 k=0;k<4;++k) if (in[k]>=count(k)) return false;
++        if ((in[4]&~29u) || in[5]>=hocket::spray_choices || in[6]>48) return false;
++        for (u32 k=0;k<8;++k) if (in[8+k]>96) return false;
++        return true;
++    }
++    void decode(const u8* in) {
++        for (u32 k=0;k<4;++k) routeWords[k]=centre(k,in[k]);
++        flags=in[4]&13;
++        grid.shuffle=in[4]&16;
++        grid.tail=in[5]; grid.transpose=static_cast<i32>(in[6])-24;
++        grid.pattern().changedMask=in[7]^15;
++        for (u32 k=0;k<8;++k) grid.pattern().set_pitch(k,static_cast<i32>(in[8+k])-48);
++    }
++};
++
++// The OS deserializes into the inactive buffer. Prepare that bank before
++// publishing its address. Playback only reads the bank for the active buffer.
++struct Projects {
++    Track banks[2][tracks];
++    const void* volatile second;
++    u32 bank(const void* project) const { return project && project==second ? 1 : 0; }
++    Track& track(const void* project,u32 t) { return banks[bank(project)][t]; }
++    void load(const void* current,const void* incoming,const u8* in) {
++        const u32 dst=1-bank(current);
++        if (in) for (u32 t=0;t<tracks;++t)
++            if (!Track::valid(in+t*width)) { in=nullptr; break; }
++        for (u32 t=0;t<tracks;++t) {
++            banks[dst][t]=Track{};
++            if (in) banks[dst][t].decode(in+t*width);
++        }
++        second=dst?incoming:current;
++    }
++    void save(const void* current,u8* out) {
++        for (u32 t=0;t<tracks;++t) track(current,t).encode(out+t*width);
++    }
++    void clear() {
++        for (auto& bank:banks) for (auto& t:bank) t=Track{};
++        second=nullptr;
++    }
++};
++}
+diff --git a/sdk/platform/opxy-1.2.1/lock_handles.cpp b/sdk/platform/opxy-1.2.1/lock_handles.cpp
+index 05f69e3..1b9e38b 100644
+--- a/sdk/platform/opxy-1.2.1/lock_handles.cpp
++++ b/sdk/platform/opxy-1.2.1/lock_handles.cpp
+@@ -376,3 +376,6 @@ u32 sdk_lock_step(u32 project, u32 track, u32 position) {
+ 
++#include "hocket_project_format.hpp"
++extern "C" bool sdk_hocket_save(const void*,opxy::u8*) __asm__("sdk_hocket_save") __attribute__((weak));
+ u32 sdk_step_locks_size(void* project, u32 budget) {
++    if (sdk_hocket_save) budget=budget>hocket_format::hocket_reserve?budget-hocket_format::hocket_reserve:0;
+     saved_limit = 0;
+diff --git a/sdk/platform/opxy-1.2.1/player_object.cpp.in b/sdk/platform/opxy-1.2.1/player_object.cpp.in
+index d69a3f9..f7cfa58 100644
+--- a/sdk/platform/opxy-1.2.1/player_object.cpp.in
++++ b/sdk/platform/opxy-1.2.1/player_object.cpp.in
+@@ -7,2 +7,6 @@
+ #include "players.hpp"
++#ifdef OPXY_HOCKET_PLAYER
++#include "hocket_probe.hpp"
++#include "hocket_settings.hpp"
++#endif
+ #include "stock.hpp"
+@@ -45,4 +49,31 @@ static u32 routing_mode(void*) { return 0; }
+ opxy::u32 sdk_voice_ticks() __asm__("sdk_voice_ticks");
+-static hocket::Grid grids[8];
+-static void editor_init(u32 track) { grids[track]=hocket::Grid{}; }
++static hocket_settings::Projects projects;
++static const void* current_project() {
++    return reinterpret_cast<const void*>(opxy::platform::word(0x840a0524));
++}
++bool sdk_hocket_save(const void*,opxy::u8*) __asm__("sdk_hocket_save");
++void sdk_hocket_load(const void*,const opxy::u8*) __asm__("sdk_hocket_load");
++void sdk_hocket_clear() __asm__("sdk_hocket_clear");
++bool sdk_hocket_save(const void* project,opxy::u8* out) {
++    if (!project || project!=current_project()) return false;
++    projects.save(project,out);
++    return true;
++}
++void sdk_hocket_load(const void* project,const opxy::u8* data) {
++    projects.load(current_project(),project,data);
++}
++void sdk_hocket_clear() { projects.clear(); }
++static hocket_settings::Track& settings(u32 track) {
++    return projects.track(current_project(),track);
++}
++static opxy::player::Controls authored_controls(void* object) {
++    auto c=opxy::platform::player_controls(object);
++    settings(static_cast<const u32*>(object)[1]).apply(c);
++    return c;
++}
++static void editor_init(u32 track) {
++    auto& g=settings(track).grid;
++    g.page=0; g.editEnabled=false;
++    if (g.capture.armed()) ++g.capture.session;
++}
+ static bool spray_controls(u32 track) {
+@@ -51,17 +82,32 @@ static bool spray_controls(u32 track) {
+ }
+-static bool editor_click(u32 track,u32 k) {
+-    hocket::Grid& g=grids[track];
+-    if (!g.page && k==2 && spray_controls(track)) {
+-        g.tail=(g.tail+1)%hocket::spray_choices;
+-        return true;
++static void mark_edit(const hocket_settings::Track& track,const opxy::u8* before) {
++    opxy::u8 after[hocket_settings::width];
++    track.encode(after);
++    for (u32 i=0;i<sizeof after;++i) if (before[i]!=after[i]) {
++        opxy::platform::stock<void()>(0x8d585ee8)();
++        return;
+     }
+-    return g.click(k);
++}
++static bool editor_click(u32 track,u32 k) {
++    auto& setup=settings(track);
++    auto& g=setup.grid;
++    opxy::u8 before[hocket_settings::width];
++    setup.encode(before);
++    if (!g.page && k==2 && spray_controls(track)) g.tail=(g.tail+1)%hocket::spray_choices;
++    else if (!g.click(k) && k<4) setup.flags^=1u<<k;
++    mark_edit(setup,before);
++    return true;
+ }
+ static bool editor_turn(u32 track,u32 k,opxy::i32 delta,bool shift) {
+-    hocket::Grid& g=grids[track];
+-    if (!g.page && !shift && k==1 && spray_controls(track)) {
+-        g.turn_transpose(delta);
+-        return true;
+-    }
+-    return g.turn(k,delta,shift);
++    auto& setup=settings(track);
++    auto& g=setup.grid;
++    if (!g.page && !shift && (k!=1 || !spray_controls(track))) return false;
++    opxy::u8 before[hocket_settings::width];
++    setup.encode(before);
++    if (!g.page && shift && k<4)
++        setup.routeWords[k]=opxy::platform::player_enum_turn(setup.route(k),setup.count(k),delta);
++    else if (!g.page) g.turn_transpose(delta);
++    else g.turn(k,delta,shift);
++    mark_edit(setup,before);
++    return true;
+ }
+@@ -71,2 +117,4 @@ static void maintain_clock(void* object) {
+ }
++// A new player object may reuse a track while older synth voices still release.
++static u32 phraseSequences[8];
+ struct HandoffPort {
+@@ -75,3 +123,3 @@ struct HandoffPort {
+     u32 track() const { return static_cast<const u32*>(object)[1]; }
+-    opxy::player::Controls controls() const { return opxy::platform::player_controls(object); }
++    opxy::player::Controls controls() const { return authored_controls(object); }
+     HandoffPort at(u32 dest) const {
+@@ -81,5 +129,9 @@ struct HandoffPort {
+     u32 time_stamp() const { return sdk_voice_ticks(); }
+-    hocket::Grid& grid() const { return grids[track()]; }
++    hocket::Grid& grid() const { return settings(track()).grid; }
+     State& memory() const { return state(object); }
+-    void on(u32 pitch, opxy::u8 velocity) {
++    u32& sequence() const { return phraseSequences[track()]; }
++    void release_spray(u32 dest,u32 owner,u32 fade,u32 start) {
++        sdk_hprobe_release(track(),dest,owner,fade,start);
++    }
++    void on(u32 pitch, opxy::u8 velocity, u32 source, u32 owner,u32 fade,u32 start) {
+         opxy::player::Plan plan;
+@@ -88,2 +140,3 @@ struct HandoffPort {
+         opxy::platform::play_plan(object, pitch, plan);
++        if (owner) sdk_hprobe_stamp(object,track(),pitch,source,owner,fade,start);
+     }
+@@ -154,3 +207,7 @@ static void step_player(void* object) {
+ #endif
++#ifdef OPXY_HOCKET_PLAYER
++    sdk_hprobe_step(object);
++#else
+     opxy::platform::stock<void(void*)>(opxy::platform::kMaestroStep)(object);
++#endif
+ #ifdef OPXY_HOCKET_PLAYER
+diff --git a/sdk/platform/opxy-1.2.1/project_companion.cpp b/sdk/platform/opxy-1.2.1/project_companion.cpp
+index c61a0cc..fc767ee 100644
+--- a/sdk/platform/opxy-1.2.1/project_companion.cpp
++++ b/sdk/platform/opxy-1.2.1/project_companion.cpp
+@@ -55,2 +55,10 @@ namespace {
+ typedef void File;
++// Hocket's optional native unit owns the live player settings.
++extern "C" {
++bool sdk_hocket_save(const void*,opxy::u8*) __asm__("sdk_hocket_save") __attribute__((weak));
++void sdk_hocket_load(const void*,const opxy::u8*) __asm__("sdk_hocket_load") __attribute__((weak));
++void sdk_hocket_clear() __asm__("sdk_hocket_clear") __attribute__((weak));
++}
++#include "hocket_project_format.hpp"
++using namespace hocket_format;
+ // newlib, as stock's project reader and writer call it (8d590d7c, 8d590e28, 8d591304, 8d590da2).
+@@ -156,2 +164,15 @@ private:
+ 
++void write_hocket(Writer& w,const opxy::u8* data) {
++    w.put("    \"open-xy.hocket\": {\"version\":1,\"data\":\"");
++    const char abc[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
++    for (u32 i=0;i<hocket_bytes;i+=3) {
++        const u32 b=i+1<hocket_bytes?data[i+1]:0, c=i+2<hocket_bytes?data[i+2]:0;
++        const u32 value=(u32(data[i])<<16)|(b<<8)|c;
++        w.byte(abc[value>>18]); w.byte(abc[(value>>12)&63]);
++        w.byte(i+1<hocket_bytes?abc[(value>>6)&63]:'=');
++        w.byte(i+2<hocket_bytes?abc[value&63]:'=');
++    }
++    w.put("\"},\n");
++}
++
+ // What the companion's sections besides open-xy.control and open-xy.locks may take: its
+@@ -168,2 +189,4 @@ void write_companion(void* project, u32 bytes, u32 crc) {
+     if (!file) return;
++    opxy::u8 hocket[hocket_bytes];
++    const bool have_hocket=sdk_hocket_save && sdk_hocket_save(project,hocket);
+     // open-xy.locks, after its garbage collection: its size first, then the sections
+@@ -179,4 +202,6 @@ void write_companion(void* project, u32 bytes, u32 crc) {
+     // Track control's section goes here, before open-xy.machines, written to the file directly.
++    sdk_companion_reserved+=have_hocket?hocket_reserve:0;
+     w.flush();
+     sdk_project_kept(file);
++    if (have_hocket) { write_hocket(w,hocket); w.flush(); }
+     if (locks) sdk_project_locks_write(file);
+@@ -737,2 +762,23 @@ bool binding_member(Parser& p, u32& bytes, u32& crc, bool& valid) {
+ 
++opxy::u8 hocket_data[hocket_bytes];
++bool hocket_present, hocket_bound;
++bool read_hocket(Parser& p) {
++    hocket_present=false;
++    if (p.peek()!='{') return p.skip();
++    u32 version=0,count=0;
++    bool version_ok=false,data_ok=false;
++    const bool read=p.object([&](const Text& k) {
++        if (k.is("version")) return p.natural(version,version_ok);
++        if (!k.is("data")) return p.skip();
++        count=0; data_ok=false;
++        if (p.peek()!='"') return p.skip();
++        return p.base64([&](u32 b) {
++            if (count<hocket_bytes) hocket_data[count]=b;
++            ++count;
++        },data_ok);
++    });
++    hocket_present=read && version_ok && version==1 && data_ok && count==hocket_bytes;
++    return read;
++}
++
+ // Any other owner's section: false only for malformed JSON; `ok` says it is an object
+@@ -874,2 +920,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
+         // Only the last sections object counts.
++        hocket_present=false;
+         applies = false;
+@@ -884,2 +931,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
+         const bool members = p.object([&](const Text& name) {
++            if (sdk_hocket_load && name.is("open-xy.hocket")) return read_hocket(p);
+             if (!section_name(name)) {
+@@ -913,2 +961,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
+ void remap(unsigned char* project) {
++    hocket_bound=hocket_present;
+     for (u32 track = 0; track < 16; ++track) {
+@@ -929,2 +978,3 @@ void remap(unsigned char* project) {
+ bool apply_companion(void* project, const char* path) {
++    hocket_bound=hocket_present=false;
+     if (!companion_path(path, read_companion_path)) return false;
+@@ -962,2 +1012,3 @@ u32 sdk_project_load(void* project, const char* path) {
+         sdk_project_locks_loaded(project, apply_companion(project, path));
++        if (sdk_hocket_load) sdk_hocket_load(project,hocket_bound?hocket_data:nullptr);
+         sdk_project_loaded(path);
+@@ -966 +1017,26 @@ u32 sdk_project_load(void* project, const char* path) {
+ }
++
++
++// Shared SDK New and Random Project operations, including builds without an
++// auxiliary control machine. Keep any installed control service in the call chain.
++extern "C" {
++u32 sdk_project_clear(u32,u32,u32) __asm__("sdk_project_clear") __attribute__((weak));
++u32 sdk_project_clear_random(u32,u32,u32) __asm__("sdk_project_clear_random") __attribute__((weak));
++u32 sdk_hocket_new(u32,u32,u32) __asm__("sdk_hocket_new");
++u32 sdk_hocket_random(u32,u32,u32) __asm__("sdk_hocket_random");
++}
++namespace {
++using ClearProject=u32(*)(u32,u32,u32);
++u32 clear_hocket(ClearProject clear,u32 a,u32 b,u32 c) {
++    const bool enabled=sdk_hocket_clear && !opxy::platform::word(0x840a0528);
++    const u32 result=clear(a,b,c);
++    if (enabled) sdk_hocket_clear();
++    return result;
++}
++}
++u32 sdk_hocket_new(u32 a,u32 b,u32 c) {
++    return clear_hocket(sdk_project_clear?sdk_project_clear:stock<u32(u32,u32,u32)>(0x8d588114),a,b,c);
++}
++u32 sdk_hocket_random(u32 a,u32 b,u32 c) {
++    return clear_hocket(sdk_project_clear_random?sdk_project_clear_random:stock<u32(u32,u32,u32)>(0x8d588988),a,b,c);
++}
+diff --git a/tooling/hocket_probe.py b/tooling/hocket_probe.py
+new file mode 100644
+index 0000000..3ea64c9
+--- /dev/null
++++ b/tooling/hocket_probe.py
+@@ -0,0 +1,49 @@
++"""Native Hocket voice-probe hooks for a selected Hocket player on stock OS 1.2.1."""
++from functools import wraps
++from .formats import require
++from .pipeline import check_patch_boundaries
++
++# The file offset and the original instruction are also verified by the OS assembler.
++SITES = (
++    (0x8d57d6c8, 0x1b4924, "00e338c0", "sdk_hprobe_emit_hook"),
++    (0x8d4dc4de, 0x11373a, "00dea011c00e0000", "sdk_hprobe_queue"),
++    (0x8d5b1598, 0x1e87f0, "ffe364fe", "sdk_hprobe_dispatch"),
++    (0x8d5b171e, 0x1e8976, "ffe3a1fd", "sdk_hprobe_dispatch"),
++    (0x8d51a8cc, 0x151b28, "00de0204c4300000", "sdk_hprobe_fresh"),
++    (0x8d51add2, 0x15202e, "aee66400", "sdk_hprobe_pending_hook"),
++    (0x8d51ae14, 0x152070, "00de0204c4300000", "sdk_hprobe_promote"),
++    (0x8d51c7a6, 0x153a02, "ffe302fa", "sdk_hprobe_render"),
++)
++
++
++def extend(profile):
++    require(profile['stock_sha256'] == '60358afdaa9b58ed40411602f6d5d4e1e3e02553ff2da7e25038e71dd002b52f',
++            'Hocket voice probe requires stock 1.2.1')
++    patches = [dict(kind='hook', address=hex(site), file_offset=hex(offset), length=len(before)//2,
++                    before=before, symbol=symbol, call=True, service='hocket_probe')
++               for site, offset, before, symbol in SITES]
++    # Reuse the SDK's two project-clear sites whether control, Hocket or both are selected.
++    clears = {'sdk_project_clear': 'sdk_hocket_new', 'sdk_project_clear_random': 'sdk_hocket_random'}
++    existing = [dict(item, service='hocket_project_clear', symbol=clears[item['symbol']])
++                if item.get('symbol') in clears else item for item in profile['patches']]
++    services = dict(profile['services'], hocket_probe=['hocket_probe'],
++                    hocket_project_clear=[*profile['services']['control'], 'hocket_probe'])
++    expanded = dict(profile, services=services, patches=existing + patches)
++    check_patch_boundaries(expanded, len(expanded['patches']))
++    return expanded
++
++def units():
++    """The two platform units are needed exactly when Hocket is in this link."""
++    return [('sdk/' + step + '.o', None, step)
++            for step in ('hocket_probe', 'hocket_probe_hooks')]
++
++
++def with_service(standard_users):
++    """Keep the SDK and extension service choices, then add Hocket's own."""
++    @wraps(standard_users)
++    def users(machines):
++        selected = standard_users(machines)
++        if any(m.kind == 'player' and m.id == 'hocket' for m in machines):
++            return selected + ['hocket_probe']
++        return selected
++    return users
+diff --git a/tooling/native.py b/tooling/native.py
+index 8c98c79..d0db124 100644
+--- a/tooling/native.py
++++ b/tooling/native.py
+@@ -37,2 +37,3 @@ from .pipeline import (PROFILE, ROOT, add_overwrite_argument, check_patch_bounda
+ from .startup import LOCK_CALLS, generate as generate_startup
++from . import hocket_probe
+ 
+@@ -122,2 +123,4 @@ def configuration(entries=None, layout=None):
+             definitions[m.prefix + '_player_id'] = m.identity['player']
++            if m.id == 'hocket':
++                profile = hocket_probe.extend(profile)
+             definitions[m.prefix + '_page_id'] = m.identity['page']
+@@ -222,2 +225,5 @@ def plan(machines, profile=None):
+             steps = ('player_object',)
++            if m.id == 'hocket':
++                units.extend(hocket_probe.units())
++
+         elif m.kind == 'effect':
+@@ -288,2 +294,3 @@ UNIT_SERVICES.update(dict.fromkeys(('master_filter_stock','master_filter_hooks',
+ 
++@hocket_probe.with_service
+ def service_users(machines):

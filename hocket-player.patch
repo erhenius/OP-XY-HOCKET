@@ -1,0 +1,564 @@
+diff --git a/sdk/platform/opxy-1.2.1/hocket_grid_view.hpp b/sdk/platform/opxy-1.2.1/hocket_grid_view.hpp
+new file mode 100644
+index 0000000..8da2dde
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_grid_view.hpp
+@@ -0,0 +1,93 @@
++// Stock only exposes matrix setters on leaves. Move each bound leaf on a
++// visibility transition and keep the inactive grid out of the playhead frame.
++struct GridView {
++    typedef opxy::u32 u32;
++    typedef opxy::i32 i32;
++    typedef opxy::screen::Leaf Leaf;
++    typedef opxy::screen::Base Base;
++    struct Item { Leaf* node; i32 x; bool shown; };
++    enum { number, knob, cell, on, ink, dim, play, cellParts };
++    enum { back, rule, title, bankLabel, hint, mode, pressIcon, orderLabel, captureIcon, captureLabel, cancelIcon, commonCount };
++    Item common[commonCount], cells[8][cellParts];
++    i32 previous[8];
++    u32 bank, timing;
++    bool shuffled, recording, wasSpray;
++    static void bind(Item& item,Base* base,const char* name,bool text) {
++        using namespace opxy::screen;
++        void* node=find(base,name);
++        if (text) item.node=text_node(node);
++        else if (PathNode* p=path_node(node)) item.node=&p->leaf;
++        if (item.node) item.x=item.node->matrix[6];
++        item.shown=true;
++    }
++    static void show(Item& item,bool visible) {
++        if (!item.node || item.shown==visible) return;
++        const u32 at[1]={6};
++        const i32 value[1]={item.x+(visible?0:(640<<10))};
++        opxy::screen::set_words(item.node,at,value);
++        item.shown=visible;
++    }
++    static void write(Item& item,const char* value) {
++        if (item.node) opxy::screen::set_text(item.node,value);
++    }
++    void init(Base* base) {
++        static const char* const names[]={"grid_back","grid_rule","grid_title","grid_bank","grid_hint","grid_mode","grid_k1","grid_order","grid_k3","grid_capture","grid_k4"};
++        for (u32 k=0;k<commonCount;++k) bind(common[k],base,names[k],k>=title && k!=pressIcon && k!=captureIcon && k!=cancelIcon);
++        static const char prefixes[][12]={"grid_num","grid_knob","grid_cell","grid_on","grid_ink","grid_dim","grid_play"};
++        for (u32 i=0;i<8;++i) {
++            previous[i]=100;
++            for (u32 k=0;k<cellParts;++k) {
++                char id[16];
++                u32 j=0;
++                for (;prefixes[k][j];++j) id[j]=prefixes[k][j];
++                id[j++]='0'+i; id[j]=0;
++                bind(cells[i][k],base,id,k==number || k==ink || k==dim);
++            }
++        }
++        bank=3;
++    }
++    void frame(const hocket::Grid& g,bool rest,u32 cursor,bool spray) {
++        const u32 page=g.page;
++        if (!page && !bank) return;
++        const bool visible=page!=0;
++        if (bank!=page) {
++            for (u32 k=0;k<commonCount;++k) show(common[k],visible);
++            if (visible) write(common[bankLabel],page==1?"slots 1-4":"slots 5-8");
++        }
++        if (visible && (bank!=page || timing!=rest)) write(common[mode],rest?"Rest":"Skip");
++        if (visible && (bank!=page || shuffled!=g.shuffle || wasSpray!=spray)) {
++            shuffled=g.shuffle;
++            write(common[orderLabel],shuffled?"Shuffle":(spray?"Scatter":"Forward"));
++        }
++        const bool armed=visible && g.capture.armed();
++        show(common[cancelIcon],armed);
++        hocket::Take take={};
++        if (armed && !g.capture.read(take)) return;
++        if (visible && (bank!=page || recording!=armed || wasSpray!=spray)) {
++            write(common[captureLabel],armed?"Keep":"Capture");
++            write(common[hint],armed?"Cancel":"shift-turn mute");
++            write(common[title],armed?"capture / play notes":(spray?"spray / semitones":"arp / semitones"));
++        }
++        recording=armed;
++        wasSpray=spray;
++        const u32 mask=armed?take.mask():g.mask();
++        for (u32 i=0;i<8;++i) {
++            Item* parts=cells[i];
++            const bool enabled=(mask&(1u<<i))!=0;
++            show(parts[number],visible); show(parts[cell],visible);
++            show(parts[knob],visible && page==1+i/4);
++            show(parts[on],visible && enabled);
++            show(parts[ink],visible && enabled);
++            show(parts[dim],visible && !enabled);
++            show(parts[play],visible && !armed && cursor==i+1);
++            const i32 value=armed?take.pitch(i):g.pitch(i);
++            if (visible && previous[i]!=value) {
++                previous[i]=value;
++                write(parts[ink],pitch_text(previous[i]));
++                write(parts[dim],pitch_text(previous[i]));
++            }
++        }
++        timing=rest;
++        bank=page;
++    }
++};
+diff --git a/sdk/platform/opxy-1.2.1/hocket_renderer.hpp b/sdk/platform/opxy-1.2.1/hocket_renderer.hpp
+new file mode 100644
+index 0000000..f5e49b1
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_renderer.hpp
+@@ -0,0 +1,147 @@
++// Included inside the generated Hocket unit's anonymous namespace.
++static const char* pitch_text(opxy::i32 n) {
++    static const char* const names[]={
++        "-48","-47","-46","-45","-44","-43","-42","-41","-40","-39","-38","-37",
++        "-36","-35","-34","-33","-32","-31","-30","-29","-28","-27","-26","-25",
++        "-24","-23","-22","-21","-20","-19","-18","-17","-16","-15","-14","-13",
++        "-12","-11","-10","-9","-8","-7","-6","-5","-4","-3","-2","-1",
++        "0","+1","+2","+3","+4","+5","+6","+7","+8","+9","+10","+11",
++        "+12","+13","+14","+15","+16","+17","+18","+19","+20","+21","+22","+23",
++        "+24","+25","+26","+27","+28","+29","+30","+31","+32","+33","+34","+35",
++        "+36","+37","+38","+39","+40","+41","+42","+43","+44","+45","+46","+47",
++        "+48"
++    };
++    return names[n+48];
++}
++#include "hocket_grid_view.hpp"
++struct Renderer {
++    typedef opxy::u32 u32;
++    typedef opxy::i32 i32;
++    typedef opxy::screen::Base Base;
++    typedef opxy::screen::Leaf Leaf;
++    enum { texts=18, paths=24 };
++    struct Object {
++        Base base;
++        Leaf* labels[texts];
++        Leaf* shapes[paths];
++        i32 home[paths];
++        const char* previous[texts];
++        GridView editor;
++        Leaf* diagnostic;
++        u32 lit, lastDiagnostic;
++        u32 watchedTrack, watchedClock, changedAt;
++        bool watchingClock;
++    };
++    static void init(Object* o) {
++        using namespace opxy::screen;
++        clear(o);
++        if (!o->base.svg) return;
++        static const char* const names[texts]={"page","playhead","rate","gate","origin","dest_a","delay_a","dest_b","delay_b","hint","semi_1","semi_2","semi_3","arp_send","arp_repeat","semi_0","pitch_label","pitch_value"};
++        for (u32 i=0;i<texts;++i)
++            o->labels[i]=text_node(find(&o->base,names[i]));
++        for (u32 i=0;i<paths;++i) {
++            char id[]="hocket_dot_00";
++            if (i<10) { id[11]='0'+i; id[12]=0; }
++            else { id[11]='0'+i/10; id[12]='0'+i%10; }
++            PathNode* p=path_node(find(&o->base,id));
++            if (p) { o->shapes[i]=&p->leaf; o->home[i]=p->leaf.matrix[6]; }
++        }
++        o->editor.init(&o->base);
++        o->diagnostic=text_node(find(&o->base,"release_status"));
++        o->lastDiagnostic=~0u;
++        o->lit=~0u;
++    }
++    static void frame(Object* o, i32) {
++        using namespace opxy::screen;
++        using namespace hocket;
++        const u32 track=selected_track();
++        void* object=opxy::platform::player_object(track,hocket_player_vtable);
++        if (!object || track>=8 || !o->base.svg) return;
++        const auto c=opxy::platform::player_controls(object);
++        const State& s=state(object);
++        const Grid& grid=grids[track];
++        const bool rests=(c.clicks[3]&1)!=0;
++        const Playhead head=playhead(c);
++        const bool spray=head==Playhead::spray;
++        o->editor.frame(grid,rests,s.cursor,spray);
++        if (grid.page) { opxy::screen::draw(&o->base); return; }
++        const bool arp=head!=Playhead::note;
++        static const char* const tails[]={"1 s","2 s","3 s","5 s","250 ms","500 ms"};
++        const u32 a=choice(c.shift_value[0],9), b=choice(c.shift_value[2],9);
++        const char* hint=probe_text(s.probe);
++        static const char* const messages[][8]={
++            {"send pending / T1", "send pending / T2", "send pending / T3", "send pending / T4", "send pending / T5", "send pending / T6", "send pending / T7", "send pending / T8"},
++            {"sent to T1", "sent to T2", "sent to T3", "sent to T4", "sent to T5", "sent to T6", "sent to T7", "sent to T8"},
++            {"no Hocket at T1", "no Hocket at T2", "no Hocket at T3", "no Hocket at T4", "no Hocket at T5", "no Hocket at T6", "no Hocket at T7", "no Hocket at T8"},
++            {"received from T1", "received from T2", "received from T3", "received from T4", "received from T5", "received from T6", "received from T7", "received from T8"},
++        };
++        switch(s.route) {
++            case Route::off: break;
++            case Route::pending: hint=messages[0][s.routeTrack]; break;
++            case Route::delivered: hint=messages[1][s.routeTrack]; break;
++            case Route::missing: hint=messages[2][s.routeTrack]; break;
++            case Route::received: hint=messages[3][s.routeTrack]; break;
++            case Route::full: hint="Hocket queue full"; break;
++        }
++        if (c.shift && s.eventCount) {
++            const u32 now=sdk_voice_ticks();
++            if (!o->watchingClock || track!=o->watchedTrack || s.clock!=o->watchedClock) {
++                o->watchedTrack=track;
++                o->watchedClock=s.clock;
++                o->changedAt=now;
++            }
++            o->watchingClock=true;
++            // 764 counter units is about a quarter second at 400 MHz.
++            if (now-o->changedAt>=764) hint="pending / clock stalled";
++        } else o->watchingClock=false;
++        const char* const values[texts]={
++            c.shift?"shift / handoffs":(arp?(rests?"playhead / Rest":"playhead / Skip"):"playhead"),spray?"Spray":(arp?"Arp":"Note"),arp?rates[choice(c.value[2],4)]:"-",arp?gates[choice(c.value[3],4)]:"held",
++            tracks[track+1], tracks[a],a?delays[choice(c.shift_value[1],11)]:"",tracks[b],b?delays[choice(c.shift_value[3],11)]:"",
++            hint,
++            arp && (grid.mask()&2)?pitch_text(grid.pitch(1)):"",arp && (grid.mask()&4)?pitch_text(grid.pitch(2)):"",arp && (grid.mask()&8)?pitch_text(grid.pitch(3)):"",
++            arp && !c.shift ? ((c.clicks[0]&1)?"Steps":"Root") : "",
++            arp && !c.shift ? (spray?tails[grid.tail]:((c.clicks[2]&1)?"Repeat":"Once")) : "",
++            arp?((grid.mask()&1)?pitch_text(grid.pitch(0)):""):"0",
++            spray?"Transpose":"Pitch",spray?pitch_text(grid.transpose):"Slots 1-8"
++        };
++        for (u32 i=0;i<texts;++i) {
++            if (!o->labels[i] || o->previous[i]==values[i]) continue;
++            set_text(o->labels[i],values[i]);
++            o->previous[i]=values[i];
++        }
++        if (o->diagnostic) {
++            u32 status=0;
++            if (c.shift) {
++                opxy::player::Display d={};
++                opxy::platform::player_output(object,d);
++                const bool stock=(d.played[0]|d.played[1]|d.played[2]|d.played[3])!=0;
++                status=0x1000u|(static_cast<u32>(s.keyCount)<<5)|(s.sounding<<1)|stock;
++            }
++            if (status!=o->lastDiagnostic) {
++                char line[]="keys 0   voices 0   stock 0";
++                line[5]+=(status>>5)&15;
++                line[16]+=(status>>1)&15;
++                line[26]+=status&1;
++                set_text(o->diagnostic,status?line:"");
++                o->lastDiagnostic=status;
++            }
++        }
++        const u32 cursor=s.cursor;
++        u32 lit=arp?(grid.mask()&15u):1u;
++        if (cursor>=1 && cursor<=(arp?4u:1u)) lit|=1u<<(3+cursor);
++        lit|=c.shift ? (0x3fu<<12) : (0xfu<<8);
++        if (arp && !c.shift) lit|=15u<<20;
++        if (a) lit|=1u<<18;
++        if (b) lit|=1u<<19;
++        if (o->lit!=lit) {
++            for (u32 i=0;i<paths;++i) {
++                if (!o->shapes[i] || !((lit^o->lit)&(1u<<i))) continue;
++                const u32 at[1]={6};
++                const i32 value[1]={o->home[i]+((lit & (1u<<i))?0:(1024<<10))};
++                set_words(o->shapes[i],at,value);
++            }
++            o->lit=lit;
++        }
++        opxy::screen::draw(&o->base);
++    }
++};
+diff --git a/sdk/platform/opxy-1.2.1/player_object.cpp.in b/sdk/platform/opxy-1.2.1/player_object.cpp.in
+index 1d85251..d69a3f9 100644
+--- a/sdk/platform/opxy-1.2.1/player_object.cpp.in
++++ b/sdk/platform/opxy-1.2.1/player_object.cpp.in
+@@ -25,7 +25,7 @@ template<class S> auto next_update(S& s, const opxy::player::Controls& c,
+ template<class S> bool next_update(S&, const opxy::player::Controls&, opxy::player::Update&, long) { return false; }
+ template<class S> auto clear_state(S& s, int) -> decltype(reset(s), void()) { reset(s); }
+ template<class S> void clear_state(S& s, long) { __builtin_memset(&s, 0, sizeof s); }
+-void apply_updates(void* object) {
++static inline void apply_updates(void* object) {
+     const auto controls = opxy::platform::player_controls(object);
+     opxy::player::Update change;
+     for (u32 i = 0; i < 8 && next_update(state(object), controls, change, 0); ++i)
+@@ -40,34 +40,134 @@ static u32 type(void*) { return static_cast<u32>(reinterpret_cast<__UINTPTR_TYPE
+ // playback mode. Maestro reads encoder 4 here; a player's controls belong
+ // only to that machine (Chords uses it for spread). Keep ordinary routing.
+ static u32 routing_mode(void*) { return 0; }
++#ifdef OPXY_HOCKET_PLAYER
++// The SDK voice clock is available even while this player is idle.
++opxy::u32 sdk_voice_ticks() __asm__("sdk_voice_ticks");
++static hocket::Grid grids[8];
++static void editor_init(u32 track) { grids[track]=hocket::Grid{}; }
++static bool spray_controls(u32 track) {
++    void* object=opxy::platform::player_object(track,@PREFIX@_player_vtable);
++    return object && hocket::playhead(opxy::platform::player_controls(object))==hocket::Playhead::spray;
++}
++static bool editor_click(u32 track,u32 k) {
++    hocket::Grid& g=grids[track];
++    if (!g.page && k==2 && spray_controls(track)) {
++        g.tail=(g.tail+1)%hocket::spray_choices;
++        return true;
++    }
++    return g.click(k);
++}
++static bool editor_turn(u32 track,u32 k,opxy::i32 delta,bool shift) {
++    hocket::Grid& g=grids[track];
++    if (!g.page && !shift && k==1 && spray_controls(track)) {
++        g.turn_transpose(delta);
++        return true;
++    }
++    return g.turn(k,delta,shift);
++}
++static void maintain_clock(void* object) {
++    const State& s=state(object);
++    opxy::platform::player_clock_pending(object,s.eventCount || s.leaseCount);
++}
++struct HandoffPort {
++    void* object;
++    // Track index is the same stock field read by player_controls().
++    u32 track() const { return static_cast<const u32*>(object)[1]; }
++    opxy::player::Controls controls() const { return opxy::platform::player_controls(object); }
++    HandoffPort at(u32 dest) const {
++        return {dest==track() ? object : opxy::platform::player_object(dest,@PREFIX@_player_vtable)};
++    }
++    bool valid() const { return object!=nullptr; }
++    u32 time_stamp() const { return sdk_voice_ticks(); }
++    hocket::Grid& grid() const { return grids[track()]; }
++    State& memory() const { return state(object); }
++    void on(u32 pitch, opxy::u8 velocity) {
++        opxy::player::Plan plan;
++        plan.count = 1;
++        plan.tones[0] = {static_cast<opxy::u8>(pitch), velocity, 0};
++        opxy::platform::play_plan(object, pitch, plan);
++    }
++    void off(u32 pitch) {
++        opxy::platform::stock<void(void*, u32)>(opxy::platform::kMaestroRelease)(object, pitch);
++        maintain_clock(object);
++    }
++};
++#endif
+ // +0x14: note-on (object, note, 0, flag, velocity) from the sequencer, live
+ // or played back. Returning 1 takes the note; 0 lets the instrument play it.
+ static u32 press(void* object, u32 note, u32, u32, u32 velocity) {
++#ifdef OPXY_HOCKET_PLAYER
++    if (note > 127 || !velocity || velocity > 127) {
++        state(object).probe = note > 127 ? @NAMESPACE@::Probe::noPitch : @NAMESPACE@::Probe::noVelocity;
++        return 0;
++    }
++    HandoffPort port = {object};
++    if (port.track()>=8) return 0;
++    @NAMESPACE@::press_key(state(object), port, note, velocity);
++    maintain_clock(object);
++#else
+     opxy::player::Plan plan;
+     if (!@NAMESPACE@::press(state(object), opxy::platform::player_controls(object), note, velocity, plan)) return 0;
+     opxy::platform::play_plan(object, note, plan);
+     apply_updates(object);
++#endif
+     return 1;
+ }
+ // +0x18: note-off (object, note). Stock Maestro releases the chord whose root it is.
+ static void release(void* object, u32 note) {
++#ifdef OPXY_HOCKET_PLAYER
++    HandoffPort port={object};
++    @NAMESPACE@::release_key(state(object),port,note);
++    maintain_clock(object);
++#else
+     if (!@NAMESPACE@::release(state(object), note))
+         opxy::platform::stock<void(void*, u32)>(opxy::platform::kMaestroRelease)(object, note);
+     apply_updates(object);
++#endif
+ }
+ static void reset_player(void* object) {
++#ifdef OPXY_HOCKET_PLAYER
++    HandoffPort port={object};
++    @NAMESPACE@::expire(state(object),port,true);
++    opxy::platform::player_clock_pending(object,false);
++#endif
+     opxy::platform::stock<void(void*)>(opxy::platform::kMaestroReset)(object);
+     clear_state(state(object), 0);
+ }
+ static void all_off(void* object) {
++#ifdef OPXY_HOCKET_PLAYER
++    HandoffPort port={object};
++    @NAMESPACE@::expire(state(object),port,true);
++    opxy::platform::player_clock_pending(object,false);
++#endif
+     opxy::platform::stock<void(void*)>(opxy::platform::kMaestroAllOff)(object);
+     clear_state(state(object), 0);
+ }
+ // Run control-driven edits on the same role as note input and stock stepping,
+ // before sounding the next tones. The GUI never edits chord records or State.
+ static void step_player(void* object) {
++#ifdef OPXY_HOCKET_PLAYER
++    HandoffPort port = {object};
++    @NAMESPACE@::tick(state(object), port);
++#else
+     apply_updates(object);
++#endif
+     opxy::platform::stock<void(void*)>(opxy::platform::kMaestroStep)(object);
++#ifdef OPXY_HOCKET_PLAYER
++    // Stock has now consumed tones and compacted empty records.
++    maintain_clock(object);
++    using @NAMESPACE@::Probe;
++    State& s=state(object);
++    if ((s.probe==Probe::waiting || s.probe==Probe::stepped) && s.probeSteps<3) {
++        ++s.probeSteps;
++        // Stock marks a consumed tone with a negative delay. This records
++        // what its scheduler actually consumed, independent of the screen rate.
++        opxy::player::Display observed={};
++        opxy::platform::player_output(object,observed);
++        const u32 pitch=s.probePitch;
++        s.probe=(observed.played[pitch/32] & (1u<<(pitch%32))) ? Probe::consumed : Probe::stepped;
++    }
++#endif
+ }
+ // Stock Maestro's method table with type, mode, note-on and note-off replaced.
+ const void* const @PREFIX@_player_vtable[16] = {
+diff --git a/sdk/platform/opxy-1.2.1/player_page.cpp.in b/sdk/platform/opxy-1.2.1/player_page.cpp.in
+index eeb3ee6..70c8065 100644
+--- a/sdk/platform/opxy-1.2.1/player_page.cpp.in
++++ b/sdk/platform/opxy-1.2.1/player_page.cpp.in
+@@ -5,6 +5,9 @@
+ #include "registration.hpp"
+ #include "screen_player.hpp"
+ namespace {
++#ifdef OPXY_HOCKET_PLAYER
++#include "hocket_renderer.hpp"
++#else
+ struct Page {
+     static const bool paged = @PAGED@;
+     static const char* const ids[@ID_COUNT@];
+@@ -22,6 +25,7 @@ const char* const Page::ids[@ID_COUNT@] = {
+ };
+ const char* const Page::titles[8] = {@TITLES@};
+ typedef opxy::screen::PlayerPage<Page> Renderer;
++#endif
+ }
+ OPXY_SCREEN(Renderer, "@PREFIX@", "@NAME@.svg", @PAGE_LIMIT@, sizeof(Renderer::Object))
+ namespace {
+@@ -33,5 +37,14 @@ const opxy::platform::Screen page_screen = {
+ }
+ // GUI startup: construct the page in its slot; once it is in place the
+ // compositor may paint it for the Maestro page.
+-int @PREFIX@_screen_register() { return opxy::platform::register_player_page(&page_record, &page_screen); }
++int @PREFIX@_screen_register() {
++    const int placed=opxy::platform::register_player_page(&page_record,&page_screen);
++#ifdef OPXY_HOCKET_PLAYER
++    if (placed==1) {
++        static opxy::platform::PlayerEditor editor={@PREFIX@_player_vtable,nullptr,editor_init,editor_click,editor_turn};
++        opxy::platform::register_player_editor(&editor);
++    }
++#endif
++    return placed;
++}
+ int @PREFIX@_screen_ready() { return sdk_screen_ready(&page_record, &page_screen); }
+diff --git a/sdk/platform/opxy-1.2.1/player_plans.hpp b/sdk/platform/opxy-1.2.1/player_plans.hpp
+index a2b1b70..fbf99c4 100644
+--- a/sdk/platform/opxy-1.2.1/player_plans.hpp
++++ b/sdk/platform/opxy-1.2.1/player_plans.hpp
+@@ -2,6 +2,19 @@
+ #pragma once
+ #include "player_activity.hpp"
+ namespace opxy { namespace platform {
++// The stock scheduler compacts empty chord records. A clocked player may
++// republish one empty record after compaction while it has scheduled work.
++// Zero tones produce no MIDI, voice, or release, and player_store can reuse
++// slot zero immediately. Never replace or evict a sounding or queued chord.
++inline void player_clock_record(PlayerChord* records, volatile u32& held, bool pending) {
++    if (pending && held==0) {
++        records[0].count=0;
++        records[0].root=0;
++        held=1;
++    } else if (!pending && held==1 && !records[0].count) {
++        held=0;
++    }
++}
+ inline bool valid_player_plan(const player::Plan& plan) {
+     if (plan.count > player::max_tones) return false;
+     for (u32 i = 0; i < plan.count; ++i)
+diff --git a/sdk/platform/opxy-1.2.1/players.cpp b/sdk/platform/opxy-1.2.1/players.cpp
+index 5763502..a5eb1bf 100644
+--- a/sdk/platform/opxy-1.2.1/players.cpp
++++ b/sdk/platform/opxy-1.2.1/players.cpp
+@@ -77,6 +77,13 @@ const Player* owned(u32 type) {
+ // The first parameter each track's page shows, 0 or 4. A player starts on its
+ // first page whenever it is built.
+ u8 rows[kTracks];
++PlayerEditor* editors;
++
++const PlayerEditor* editor_for(const Player* p) {
++    for (PlayerEditor* e=editors;e;e=e->next)
++        if (e->vtable==p->vtable) return e;
++    return nullptr;
++}
+ 
+ // The selected track's player when a press switches its page: a paged player
+ // whose own page is in place. Stock places a page at GUI startup when its slot
+@@ -97,6 +104,8 @@ void count_click(u32 encoder) {
+     const u32 track = selected_track();
+     if (!p || track >= kTracks) return;
+     if (void* object = player_object(track, p->vtable)) {
++        if (const PlayerEditor* e=editor_for(p))
++            if (e->click(track,encoder)) return;
+         volatile PlayerInput* input = player_input(object);
+         input->clicks[encoder] = static_cast<opxy::u8>(input->clicks[encoder] + 1);
+     }
+@@ -125,6 +134,12 @@ bool equal(const StockString* string, const char* name) {
+ }
+ }
+ 
++void register_player_editor(PlayerEditor* editor) {
++    for (PlayerEditor* e=editors;e;e=e->next) if (e==editor) return;
++    editor->next=editors;
++    editors=editor;
++}
++
+ void* player_state(void* object) { return bytes(object) + kStateOffset; }
+ volatile PlayerInput* player_input(void* object) {
+     return reinterpret_cast<volatile PlayerInput*>(bytes(object) + kInputOffset);
+@@ -167,6 +182,11 @@ opxy::player::Controls player_controls(void* object) {
+     return controls;
+ }
+ 
++void player_clock_pending(void* object,bool pending) {
++    volatile u32& held=*reinterpret_cast<volatile u32*>(bytes(object)+kHeld);
++    player_clock_record(reinterpret_cast<ChordRecord*>(bytes(object)+kRecords),held,pending);
++}
++
+ void play_plan(void* object, u32 root, const Plan& plan) {
+     volatile u32& held = *reinterpret_cast<volatile u32*>(bytes(object) + kHeld);
+     if (!plan.count) return;  // silent input must not alter an existing root
+@@ -207,7 +227,10 @@ void* sdk_player_build(u32 track, u32 type, u32) {
+         }
+         for (u32 i = 0; i < 4; ++i) input->clicks[i] = 0;
+         *static_cast<const void* const**>(object) = p->vtable;
+-        if (track < kTracks) rows[track] = 0;
++        if (track < kTracks) {
++            rows[track] = 0;
++            if (const PlayerEditor* e=editor_for(p)) e->init(track);
++        }
+     }
+     return object;
+ }
+@@ -244,6 +267,10 @@ u32 sdk_player_turn(u32 index, const opxy::i32* event) {
+     const Player* p = owned(stock<u32()>(kSelectedType)());
+     if (!p) return 0;
+     const u32 track = selected_track();
++    if (const PlayerEditor* e=editor_for(p)) {
++        if (track<kTracks && page_selected==kMaestroPage && player_object(track,p->vtable) &&
++            e->turn(track,index&3,event[1],shift_held())) return 1;
++    }
+     const u32 row = paged(track) ? player_row(track) : 0;
+     // The shift row first: an absent main slot does not block Shift on its encoder.
+     if (p->shift && track < kTracks && shift_held()) {
+diff --git a/sdk/platform/opxy-1.2.1/players.hpp b/sdk/platform/opxy-1.2.1/players.hpp
+index 861890d..5661ce0 100644
+--- a/sdk/platform/opxy-1.2.1/players.hpp
++++ b/sdk/platform/opxy-1.2.1/players.hpp
+@@ -22,6 +22,14 @@ struct PlayerInput {
+ };
+ // A linked player. In a browser kit an unselected player's lookup resolves to
+ // a function returning null.
++struct PlayerEditor {
++    const void* const* vtable;
++    PlayerEditor* next;
++    void (*init)(u32 track);
++    bool (*click)(u32 track,u32 encoder);
++    bool (*turn)(u32 track,u32 encoder,i32 detents,bool shift);
++};
++void register_player_editor(PlayerEditor* editor);
+ struct Player {
+     const char* type_id;     // absolute symbol: the player's stock type, supplied at link time
+     const char* name;
+@@ -56,6 +64,7 @@ int register_player_page(const Record* record, const Screen* screen);
+ u32 player_row(u32 track);
+ // The track's eight parameters.
+ opxy::player::Controls player_controls(void* object);
++void player_clock_pending(void* object,bool pending);
+ // Appends one chord record that stock plays from the next step and releases
+ // with the key `root`; drops the plan when the object already holds eight.
+ void play_plan(void* object, u32 root, const opxy::player::Plan& plan);

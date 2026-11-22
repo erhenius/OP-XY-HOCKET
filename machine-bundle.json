@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "Hocket",
+  "id": "hocket",
+  "mode": "combined",
+  "sdkCommit": "28dd1a2e36599108c5eecf1a03f3b28601e50b39",
+  "machine": "hocket",
+  "claims": [
+    "hook:0x8d57d6c8",
+    "hook:0x8d4dc4de",
+    "hook:0x8d5b1598",
+    "hook:0x8d5b171e",
+    "hook:0x8d51a8cc",
+    "hook:0x8d51add2",
+    "hook:0x8d51ae14",
+    "hook:0x8d51c7a6"
+  ],
+  "patches": [
+    {
+      "path": "hocket-player.patch",
+      "sha256": "b97eecd846e37bdb5d97e5257b0df0bc1014e6f4b755089587c867d0d8b6c1d4"
+    },
+    {
+      "path": "hocket-voice-probe.patch",
+      "sha256": "484df98691cf0ebaae55dd519b23d92a330c7a89f512e93716d0fa7afcba718f"
+    }
+  ]
+}

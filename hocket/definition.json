@@ -1,0 +1,176 @@
+{
+  "schema": 1,
+  "id": "hocket",
+  "name": "Hocket",
+  "resources": {},
+  "presets": {},
+  "press": "click",
+  "parameters": [
+    {
+      "id": "playhead",
+      "label": "Playhead",
+      "default": 0.75,
+      "display": "enum",
+      "mapping": {
+        "kind": "enum",
+        "labels": [
+          "Note",
+          "Spray",
+          "Arp"
+        ]
+      }
+    },
+    {
+      "id": "pitch",
+      "label": "",
+      "absent": true,
+      "default": 0,
+      "display": "percent",
+      "mapping": {
+        "kind": "linear",
+        "minimum": 0,
+        "maximum": 1
+      }
+    },
+    {
+      "id": "rate",
+      "label": "Rate",
+      "default": 0.375,
+      "display": "enum",
+      "mapping": {
+        "kind": "enum",
+        "labels": [
+          "1_32",
+          "1_16",
+          "1_8",
+          "1_4"
+        ]
+      }
+    },
+    {
+      "id": "gate",
+      "label": "Gate",
+      "default": 0.375,
+      "display": "enum",
+      "mapping": {
+        "kind": "enum",
+        "labels": [
+          "25 pct",
+          "50 pct",
+          "75 pct",
+          "100 pct"
+        ]
+      }
+    }
+  ],
+  "shift": [
+    {
+      "id": "send_a",
+      "label": "Send A",
+      "default": 0.05555555555555555,
+      "display": "enum",
+      "mapping": {
+        "kind": "enum",
+        "labels": [
+          "Off",
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7",
+          "T8"
+        ]
+      }
+    },
+    {
+      "id": "delay_a",
+      "label": "Delay A",
+      "default": 0.15217391304347827,
+      "display": "enum",
+      "mapping": {
+        "kind": "enum",
+        "labels": [
+          "0",
+          "1_64",
+          "1_32",
+          "1_16",
+          "2_16",
+          "3_16",
+          "4_16",
+          "5_16",
+          "6_16",
+          "7_16",
+          "8_16",
+          "9_16",
+          "10_16",
+          "11_16",
+          "12_16",
+          "13_16",
+          "14_16",
+          "15_16",
+          "20ms",
+          "50ms",
+          "100ms",
+          "250ms",
+          "500ms"
+        ]
+      }
+    },
+    {
+      "id": "send_b",
+      "label": "Send B",
+      "default": 0.05555555555555555,
+      "display": "enum",
+      "mapping": {
+        "kind": "enum",
+        "labels": [
+          "Off",
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7",
+          "T8"
+        ]
+      }
+    },
+    {
+      "id": "delay_b",
+      "label": "Delay B",
+      "default": 0.15217391304347827,
+      "display": "enum",
+      "mapping": {
+        "kind": "enum",
+        "labels": [
+          "0",
+          "1_64",
+          "1_32",
+          "1_16",
+          "2_16",
+          "3_16",
+          "4_16",
+          "5_16",
+          "6_16",
+          "7_16",
+          "8_16",
+          "9_16",
+          "10_16",
+          "11_16",
+          "12_16",
+          "13_16",
+          "14_16",
+          "15_16",
+          "20ms",
+          "50ms",
+          "100ms",
+          "250ms",
+          "500ms"
+        ]
+      }
+    }
+  ]
+}
