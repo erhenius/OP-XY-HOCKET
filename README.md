@@ -1,6 +1,6 @@
 # Hocket
 
-A note player for the **Teenage Engineering OP-XY**. Play a key or sequence a note on one instrument track and let up to two other tracks answer. Each receiver plays its own instrument and can pass the phrase on. A bass can hold the root while a second track picks out an arpeggio and a third scatters the same notes into a fading tail.
+A note player for the **Teenage Engineering OP-XY**. Play a key or sequence a note on one instrument track and let up to two other tracks answer. All 8 tracks can be chained together! Each receiver plays its own instrument and can pass the phrase on. A bass can hold the root while a second track picks out an arpeggio and a third scatters the same notes into a fading tail.
 
 ![A four-note arpeggio on T1 passes to T2 one sixteenth later and T3 three sixteenths later. The moving score shows when each instrument plays.](docs/hocket.gif)
 
