@@ -5,12 +5,37 @@
 namespace hocket {
 using namespace opxy;
 using player::Controls;
-const char* const rates[] = {"1/32", "1/16", "1/8", "1/4"};
-const u8 rate_steps[] = {30, 60, 120, 240};
+const char* const rates[] = {"1/32","1/32.","1/16","1/16.","1/8","1/8.","1/4","1/4.","1/2"};
+const u16 rate_steps[] = {30,45,60,90,120,180,240,360,480};
 const char* const delays[] = {"0", "1/64", "1/32", "1/16", "2/16", "3/16", "4/16", "5/16", "6/16", "7/16", "8/16", "9/16", "10/16", "11/16", "12/16", "13/16", "14/16", "15/16", "20ms", "50ms", "100ms", "250ms", "500ms"};
 const u16 delay_values[] = {0,15,30,60,120,180,240,300,360,420,480,540,600,660,720,780,840,900,20,50,100,250,500};
 const char* const tracks[] = {"Off","T1","T2","T3","T4","T5","T6","T7","T8"};
-const char* const gates[] = {"25%", "50%", "75%", "100%"};
+const char* const gates[] = {"5%","10%","15%","20%","25%","30%","35%","40%","45%","50%","55%","60%","65%","70%","75%","80%","85%","90%","95%","100%"};
+constexpr u32 rateChoices=sizeof(rate_steps)/sizeof(rate_steps[0]);
+constexpr u32 gateChoices=sizeof(gates)/sizeof(gates[0]);
+
+// The first four-position release wrote bucket centres. New detents have
+// distinguishable Q31 words inside their natural parameter buckets. Untouched
+// stock words still use the original four-position mapping on every pattern.
+template<u32 Count> static inline i32 timing_word(u32 index) {
+    // Use an interior Q15 position distinct from both old centres and endpoints.
+    constexpr u32 scale=32768, inset=scale*5/16;
+    const u32 q15=((index*scale+inset)/Count)|1u;
+    return static_cast<i32>((q15<<16)+0x8000u);
+}
+template<u32 Count> static inline u32 timing_index(i32 word) {
+    const u32 index=player::choice(word,Count);
+    if ((static_cast<u32>(word)>>16)==(static_cast<u32>(timing_word<Count>(index))>>16)) return index;
+    const u32 old=player::choice(word,4);
+    return Count==rateChoices ? old*2 : old*5+4;
+}
+template<u32 Count> static inline i32 turn_timing(i32 word,i32 delta) {
+    if (!delta) return word;
+    const i32 now=static_cast<i32>(timing_index<Count>(word));
+    const i32 last=static_cast<i32>(Count)-1;
+    const i32 next=delta>last-now?last:(delta< -now?0:now+delta);
+    return timing_word<Count>(static_cast<u32>(next));
+}
 const u32 delayChoices=sizeof(delay_values)/sizeof(delay_values[0]);
 const u32 eventCapacity=64;
 enum class Probe : u8 { idle, clockOnly, noPitch, noVelocity, waiting, stepped, consumed, cleared };
@@ -18,6 +43,14 @@ enum class Route : u8 { off, pending, delivered, missing, received, full };
 enum class Playhead : u8 { note, spray, arp };
 static inline Playhead playhead(const Controls& c) {
     return static_cast<Playhead>(player::choice(c.value[0],3));
+}
+// Fork detent 1 splits at 16, then every 8 velocity units up to 120.
+constexpr u8 forkMax=14, swingMax=19, nudgeMax=20;
+static inline u32 fork_threshold(u8 index) { return index ? 8u*(index+1) : 0; }
+// The seventh detent preserves the old triplet setting (67% of a pair).
+static inline u32 swing_magnitude(i32 detent) {
+    const u32 n=detent<0?-detent:detent;
+    return n==7?34u:5u*n;
 }
 const u16 spray_ms[]={1000,2000,3000,5000,250,500};
 const u32 spray_choices=sizeof(spray_ms)/sizeof(spray_ms[0]);
@@ -31,13 +64,21 @@ struct Event {
     union { u32 duration; u32 fadeStamp; }; // Incoming gate, then wall time of release for Spray.
     u32 start;
     union { u32 order; u32 sprayOwner; }; // Arp slot order or the ID owning this Spray's local gates.
-    u8 rate, gate; // current rate table tops out at 240 player ticks
-    u8 target, note, velocity, visited, step;
+    u8 rateIndex;
+    u8 target:3, gateIndex:5;
+    u32 interval() const { return rate_steps[rateIndex]; }
+    u32 gate_ticks() const { return interval()*(gateIndex+1u)/gateChoices; }
+    short offset; // Signed displacement of the attack from its nominal grid tick.
+    u8 note, velocity, visited;
+    signed char depth; // Signed swing or unsigned-range Spray depth.
     Kind kind;
+    u8 step:4, length:4;
     u8 released:1, repeat:1, sendSteps:1, rests:1, fading:1, tail:3;
-    u8 mask, length;
-    signed char transpose;
+    u8 mask;
+    u32 attack() const { return due+offset; }
 };
+static_assert(gateChoices<=32,"gate index must fit its five-bit field");
+static_assert(sizeof(Event)==32,"preserve the 64-event queue footprint");
 struct Input { u32 id, start; u8 note; };
 struct Lease {
     u32 id, ticket;
@@ -173,14 +214,42 @@ static u32 deal(const Event& e,u32 passStart) {
     return shuffled_order(e.mask,seed);
 }
 
+// Keep the nominal grid and the audible deadline separate. Repeats, shuffle
+// and gap recovery all use the original grid even when an attack is early.
+static void place_attack(Event& e) {
+    e.offset=0;
+    if (!e.depth || e.due==e.start) return;
+    const u32 rate=e.interval();
+    if (e.kind==Kind::arpStep) {
+        if (((e.due-e.start)/rate)&1u) {
+            const i32 ticks=(rate*swing_magnitude(e.depth)+50u)/100u;
+            e.offset=e.depth<0?-ticks:ticks;
+        }
+        return;
+    }
+    u32 bits=e.id*0x9e3779b9u ^ (e.target+1u)*0x85ebca6bu ^ e.due;
+    bits^=bits>>16;
+    bits*=0x7feb352du;
+    bits^=bits>>15;
+    bits*=0x846ca68bu;
+    bits^=bits>>16;
+    const u32 radius=rate*e.depth/(2u*nudgeMax);
+    e.offset=static_cast<i32>(((bits>>16)*(2u*radius+1u))>>16)-static_cast<i32>(radius);
+    // At full depth on an even-length grid, neighbouring slots share a
+    // midpoint. Give it to the odd slot so two hits can never coincide.
+    if ((2*e.offset==static_cast<i32>(rate) || -2*e.offset==static_cast<i32>(rate)) &&
+        !(((e.due-e.start)/rate)&1u)) e.offset+=e.offset<0?1:-1;
+}
+
 // The step is the current subdivision in a single pass, even after long holds.
 static void advance_spray(Event& e,u32 subdivisions) {
-    e.due+=subdivisions*e.rate;
+    e.due+=subdivisions*e.interval();
     e.step=(e.step+subdivisions%e.length)%e.length;
     while (e.rests && !(e.mask&(1u<<e.step))) {
-        e.due+=e.rate;
+        e.due+=e.interval();
         if (++e.step==e.length) e.step=0;
     }
+    place_attack(e);
 }
 
 template<class Port>
@@ -198,7 +267,7 @@ static void begin_spray_release(Port& source,Event& e,u32 clock,u32 stamp,u32 te
 static u32 spray_slot(const Event& e) {
     const u32 count=phrase_length(e.mask,false);
     if (e.repeat) { // In Spray, this flag selects a freshly shuffled order per pass.
-        const u32 order=deal(e,e.due-e.step*e.rate);
+        const u32 order=deal(e,e.due-e.step*e.interval());
         const u32 slot=phrase_slot(e.mask,e.step,e.rests);
         return (order>>(4*slot))&7u;
     }
@@ -216,20 +285,26 @@ static u32 spray_slot(const Event& e) {
 static void skip_missed_attacks(State& s,u32 grace) {
     for (u32 i=0;i<s.eventCount;) {
         Event& e=s.event(i);
-        if (!ready(s.clock,e.due+grace+1)) { ++i; continue; }
-        if (e.kind==Kind::sprayStep) {
-            const u32 missed=s.clock-e.due;
-            advance_spray(e,missed/e.rate+(missed%e.rate!=0));
-            ++i;
-            continue;
-        }
-        if (e.kind==Kind::arpStep) {
-            const u32 skip=(s.clock-e.due+e.rate-1)/e.rate;
-            const u32 step=e.step+skip;
-            e.due+=skip*e.rate;
-            if ((e.repeat || step<e.length) && !(e.repeat && e.released && ready(e.due,e.start+e.duration))) {
-                e.step=static_cast<u8>(step%e.length);
-                if (e.order && step>=e.length) e.order=deal(e,e.due-e.step*e.rate);
+        if (!ready(s.clock,e.attack()+grace+1)) { ++i; continue; }
+        if (e.kind!=Kind::launch) {
+            // Jump by whole nominal slots, then check the actual displaced
+            // deadline. Even at maximum depth adjacent attacks stay ordered.
+            const u32 skip=ready(s.clock,e.due)?(s.clock-e.due)/e.interval():0;
+            if (e.kind==Kind::sprayStep) {
+                if (skip) advance_spray(e,skip);
+                while (!ready(e.attack(),s.clock)) advance_spray(e,1);
+                ++i;
+                continue;
+            }
+            u32 step=e.step+skip;
+            e.due+=skip*e.interval();
+            place_attack(e);
+            while (!ready(e.attack(),s.clock)) {
+                ++step; e.due+=e.interval(); place_attack(e);
+            }
+            if ((e.repeat || step<e.length) && !(e.repeat && e.released && ready(e.attack(),e.start+e.duration))) {
+                e.step=step%e.length;
+                if (e.order && step>=e.length) e.order=deal(e,e.due-e.step*e.interval());
                 ++i;
                 continue;
             }
@@ -336,13 +411,14 @@ static void watch_sender(Port& source,u32 target) {
 }
 
 template<class Port>
-static void handoff(State& s,Port& source,const Controls& c,Event next) {
+static void handoff(State& s,Port& source,const Controls& c,Event next,u32 branches=3) {
     const u8 visited=next.visited;
     next.kind=Kind::launch;
+    next.offset=0;
     next.step=0;
     for (u32 k=0;k<4;k+=2) {
         const u32 dest=choice(c.shift_value[k],9);
-        if (!dest || (visited & (1u<<(dest-1)))) continue;
+        if (!(branches&(1u<<(k/2))) || !dest || (visited & (1u<<(dest-1)))) continue;
         next.target=dest-1;
         next.due=s.clock+delay_steps(choice(c.shift_value[k+1],delayChoices),c.bpm_x10);
         if (!schedule(s,next)) continue;
@@ -375,7 +451,7 @@ static void finish_spray(State& s,Port& source,const Event& e) {
 
 template<class Port>
 static void spray_step(State& s,Port& source,Port& output,const Controls& c,Event e,u32 stamp) {
-    u32 gate=e.gate;
+    u32 gate=e.gate_ticks();
     u8 velocity=e.velocity;
     if (e.fading) {
         const u32 span=tail_stamps(e.tail);
@@ -388,10 +464,11 @@ static void spray_step(State& s,Port& source,Port& output,const Controls& c,Even
         if (remainingSteps<gate) gate=remainingSteps;
     }
     Event continuation=e;
+    continuation.depth=output.grid().nudge;
     advance_spray(continuation,1);
     schedule(s,continuation); // Reserve the existing tail before offering new handoffs.
     const u32 slot=spray_slot(e);
-    const i32 pitch=e.note+e.transpose+output.grid().pitch(slot);
+    const i32 pitch=e.note+output.grid().pitch(slot);
     if (pitch>=0 && pitch<=127) {
         Event hit=e;
         // Local Spray keeps the input dynamics. Steps keeps its outgoing velocity contour.
@@ -429,20 +506,25 @@ static void perform(State& s,Port& source,Event e,u32 stamp) {
         const Playhead mode=playhead(c);
         arp=mode!=Playhead::note;
         e.order=0;
-        e.start=s.clock;
+        e.start=e.due=s.clock;
         e.visited|=1u<<e.target;
         e.sendSteps=arp && (c.clicks[0]&1);
         e.repeat=mode==Playhead::arp && (c.clicks[2]&1);
         if (arp) {
+            e.depth=mode==Playhead::arp?output.grid().swing:output.grid().nudge;
             e.mask=output.grid().mask();
             e.rests=(c.clicks[3]&1)!=0;
             e.length=phrase_length(e.mask,e.rests);
             if (!e.length) return;
             if (mode==Playhead::arp && output.grid().shuffle) e.order=deal(e,s.clock);
-            e.rate=rate_steps[choice(c.value[2],4)];
-            e.gate=e.rate*(1+choice(c.value[3],4))/4;
+            e.rateIndex=timing_index<rateChoices>(c.value[2]);
+            e.gateIndex=timing_index<gateChoices>(c.value[3]);
         }
-        if (!e.sendSteps) handoff(s,source,c,e);
+        if (!e.sendSteps) {
+            const u32 threshold=arp?0:fork_threshold(output.grid().fork);
+            const u32 branches=threshold?(e.velocity>=threshold?1u:2u):3u;
+            handoff(s,source,c,e,branches);
+        }
         else if (e.rests && !(e.mask&1)) {
             // A leading rest has no note to dispatch. A running destination
             // can still service the originating phrase during this interval.
@@ -456,10 +538,10 @@ static void perform(State& s,Port& source,Event e,u32 stamp) {
             e.tail=output.grid().tail;
             e.sprayOwner=next_id(source.sequence());
             e.fading=false;
-            e.transpose=output.grid().transpose;
             e.repeat=output.grid().shuffle;
             e.due=s.clock;
             advance_spray(e,0);
+            e.offset=0; // The first audible slot always lands on its grid tick.
             if (e.due==s.clock) spray_step(s,source,output,c,e,stamp);
             else schedule(s,e);
             return;
@@ -469,19 +551,21 @@ static void perform(State& s,Port& source,Event e,u32 stamp) {
     const u32 slot=arp?phrase_slot(e.mask,e.step,e.rests):0;
     const u32 pitchSlot=e.order?(e.order>>(4*slot))&7u:slot;
     const i32 pitch=arp?e.note+output.grid().pitch(pitchSlot):e.note;
-    const u32 gate=arp ? e.gate : e.duration;
+    const u32 gate=arp ? e.gate_ticks() : e.duration;
     if ((!arp || (e.mask&(1u<<slot))) && pitch>=0 && pitch<=127) {
         sound(s,source,output,e,pitch,!arp && !e.released,gate,pitchSlot);
         if (e.sendSteps) send_step(s,source,c,e,pitch,gate);
     }
     if (arp && (++e.step<e.length || e.repeat)) {
         e.kind=Kind::arpStep;
-        e.due=s.clock+e.rate;
+        e.depth=output.grid().swing;
+        e.due+=e.interval();
+        place_attack(e);
         if (e.step==e.length) {
             e.step=0;
             if (e.order) e.order=deal(e,e.due);
         }
-        if (!e.repeat || !e.released || !ready(e.due,e.start+e.duration)) schedule(s,e);
+        if (!e.repeat || !e.released || !ready(e.attack(),e.start+e.duration)) schedule(s,e);
     }
 }
 
@@ -500,7 +584,7 @@ static void drain(State& s,Port& source,u32 stamp) {
                 continue;
             }
         }
-        if (!ready(s.clock,pending.due)) { ++i; continue; }
+        if (!ready(s.clock,pending.attack())) { ++i; continue; }
         Event e=s.event(i);
         s.event(i)=s.event(--s.eventCount);
         if (e.kind==Kind::launch) {
@@ -530,7 +614,7 @@ static void release_key(State& s,Port& source,u32 note) {
                 e.released=true;
                 e.duration=duration;
                 if (e.kind==Kind::sprayStep) begin_spray_release(source,e,s.clock,source.time_stamp(),s.tempo?s.tempo:1200);
-                if (e.kind==Kind::arpStep && e.repeat && ready(e.due,e.start+duration)) {
+                if (e.kind==Kind::arpStep && e.repeat && ready(e.attack(),e.start+duration)) {
                     s.event(i)=s.event(--s.eventCount);
                     continue;
                 }

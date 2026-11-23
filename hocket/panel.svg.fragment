@@ -11,7 +11,7 @@
   <text font-size="10px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="mainLabel0" transform="matrix(1 0 0 1 47 56)">Playhead</text>
   <text font-size="17px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainValue0" transform="matrix(1 0 0 1 72 77)">Arp</text>
   <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#585858" stroke="#585858" stroke-width="1" id="mainKnob1" transform="matrix(1 0 0 1 141 52)" />
-  <text font-size="10px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="mainLabel1" transform="matrix(1 0 0 1 153 56)">Transpose</text>
+  <text font-size="10px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="mainLabel1" transform="matrix(1 0 0 1 153 56)">Vel fork</text>
   <text font-size="17px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="start" id="mainValue1" transform="matrix(1 0 0 1 153 77)">0</text>
   <path d="M-4.7 0 C-4.7 -6.25 4.7 -6.25 4.7 0 C4.7 6.25 -4.7 6.25 -4.7 0 Z" fill="#ababab" stroke="#ababab" stroke-width="1" id="mainKnob2" transform="matrix(1 0 0 1 247 52)" />
   <text font-size="10px" font-family="UniversNextPro-Light" fill="#aaaaaa" text-anchor="start" id="mainLabel2" transform="matrix(1 0 0 1 259 56)">Rate</text>
@@ -25,40 +25,48 @@
   <path d="M0 0 H43 V44 H0 Z" fill="#dededc" stroke="#dededc" stroke-width="0.8" transform="matrix(1 0 0 1 30 119)" />
   <text font-size="19px" font-family="UniversNextPro-Light" fill="#111111" text-anchor="middle" id="originTrack" transform="matrix(1 0 0 1 51 149)">T1</text>
   <path d="M0 0 H159 V0.65 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="noteWire" transform="matrix(1 0 0 1 81 141)" />
-  <path d="M0 0 H18.6 V69 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_0" transform="matrix(1 0 0 1 82 104)" />
-  <path d="M0 0 H18.6 V69 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_1" transform="matrix(1 0 0 1 101 104)" />
-  <path d="M0 0 H18.6 V69 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_2" transform="matrix(1 0 0 1 120 104)" />
-  <path d="M0 0 H18.6 V69 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_3" transform="matrix(1 0 0 1 139 104)" />
-  <path d="M0 0 H18.6 V69 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_4" transform="matrix(1 0 0 1 161 104)" />
-  <path d="M0 0 H18.6 V69 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_5" transform="matrix(1 0 0 1 180 104)" />
-  <path d="M0 0 H18.6 V69 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_6" transform="matrix(1 0 0 1 199 104)" />
-  <path d="M0 0 H18.6 V69 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_7" transform="matrix(1 0 0 1 218 104)" />
-  <path d="M0 0 h1.1 M5 0 h1.1 M10 0 h1.1 M15 0 h1.1 M20 0 h1.1 M25 0 h1.1 M30 0 h1.1 M35 0 h1.1 M40 0 h1.1 M45 0 h1.1 M50 0 h1.1 M55 0 h1.1 M60 0 h1.1 M65 0 h1.1 M70 0 h1.1 M75 0 h1.1 M80 0 h1.1 M85 0 h1.1 M90 0 h1.1 M95 0 h1.1 M100 0 h1.1 M105 0 h1.1 M110 0 h1.1 M115 0 h1.1 M120 0 h1.1 M125 0 h1.1 M130 0 h1.1 M135 0 h1.1 M140 0 h1.1 M145 0 h1.1 M150 0 h1.1" fill="none" stroke="#585858" stroke-width="0.8" id="zeroLine" transform="matrix(1 0 0 1 82 148)" />
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_8" transform="matrix(1 0 0 1 85.2 147)" />
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_9" transform="matrix(1 0 0 1 85.2 147)" />
-  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi0" transform="matrix(1 0 0 1 91 142)">0</text>
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_10" transform="matrix(1 0 0 1 104.2 147)" />
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_11" transform="matrix(1 0 0 1 104.2 147)" />
-  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi1" transform="matrix(1 0 0 1 110 142)">0</text>
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_12" transform="matrix(1 0 0 1 123.2 147)" />
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_13" transform="matrix(1 0 0 1 123.2 147)" />
-  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi2" transform="matrix(1 0 0 1 129 142)">0</text>
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_14" transform="matrix(1 0 0 1 142.2 147)" />
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_15" transform="matrix(1 0 0 1 142.2 147)" />
-  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi3" transform="matrix(1 0 0 1 148 142)">0</text>
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_16" transform="matrix(1 0 0 1 164.2 147)" />
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_17" transform="matrix(1 0 0 1 164.2 147)" />
-  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi4" transform="matrix(1 0 0 1 170 142)">0</text>
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_18" transform="matrix(1 0 0 1 183.2 147)" />
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_19" transform="matrix(1 0 0 1 183.2 147)" />
-  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi5" transform="matrix(1 0 0 1 189 142)">0</text>
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_20" transform="matrix(1 0 0 1 202.2 147)" />
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_21" transform="matrix(1 0 0 1 202.2 147)" />
-  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi6" transform="matrix(1 0 0 1 208 142)">0</text>
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_22" transform="matrix(1 0 0 1 221.2 147)" />
-  <path d="M0 0 H11.6 V2.1 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_23" transform="matrix(1 0 0 1 221.2 147)" />
-  <text font-size="10px" font-family="UniversNextPro-Light" fill="#eeeeee" text-anchor="middle" id="semi7" transform="matrix(1 0 0 1 227 142)">0</text>
-  <path d="M0 0 H4 V4 H0 Z" fill="#ff4949" stroke="#ff4949" stroke-width="0.8" id="cursor" transform="matrix(1 0 0 1 89 167)" />
+  <path d="M0 0 H14.8 V92 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_0" transform="matrix(1 0 0 1 112 91)" />
+  <path d="M0 0 H14.8 V92 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_1" transform="matrix(1 0 0 1 127 91)" />
+  <path d="M0 0 H14.8 V92 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_2" transform="matrix(1 0 0 1 142 91)" />
+  <path d="M0 0 H14.8 V92 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_3" transform="matrix(1 0 0 1 157 91)" />
+  <path d="M0 0 H14.8 V92 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_4" transform="matrix(1 0 0 1 176 91)" />
+  <path d="M0 0 H14.8 V92 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_5" transform="matrix(1 0 0 1 191 91)" />
+  <path d="M0 0 H14.8 V92 H0 Z" fill="#161616" stroke="#161616" stroke-width="0.8" id="hocket_dot_6" transform="matrix(1 0 0 1 206 91)" />
+  <path d="M0 0 H14.8 V92 H0 Z" fill="#1d1d1d" stroke="#1d1d1d" stroke-width="0.8" id="hocket_dot_7" transform="matrix(1 0 0 1 221 91)" />
+  <path d="M0 0 h1.1 M5 0 h1.1 M10 0 h1.1 M15 0 h1.1 M20 0 h1.1 M25 0 h1.1 M30 0 h1.1 M35 0 h1.1 M40 0 h1.1 M45 0 h1.1 M50 0 h1.1 M55 0 h1.1 M60 0 h1.1 M65 0 h1.1 M70 0 h1.1 M75 0 h1.1 M80 0 h1.1 M85 0 h1.1 M90 0 h1.1 M95 0 h1.1 M100 0 h1.1 M105 0 h1.1 M110 0 h1.1 M115 0 h1.1 M120 0 h1.1" fill="none" stroke="#585858" stroke-width="0.8" id="zeroLine" transform="matrix(1 0 0 1 112 136)" />
+  <path d="M0 0 H9 V2 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_8" transform="matrix(1 0 0 1 115 135.5)" />
+  <path d="M0 0 H9 V2 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_9" transform="matrix(1 0 0 1 115 135.5)" />
+  <path id="axisTick0" d="M0 0 H8" fill="none" stroke="#959595" stroke-width="0.7" transform="matrix(1 0 0 1 103 136)" />
+  <text font-size="7px" font-family="UniversNextPro-Light" fill="#dadada" text-anchor="end" id="semi0" transform="matrix(1 0 0 1 101.5 138.5)">0</text>
+  <path d="M0 0 H9 V2 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_10" transform="matrix(1 0 0 1 130 135.5)" />
+  <path d="M0 0 H9 V2 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_11" transform="matrix(1 0 0 1 130 135.5)" />
+  <path id="axisTick1" d="M0 0 H8" fill="none" stroke="#959595" stroke-width="0.7" transform="matrix(1 0 0 1 103 136)" />
+  <text font-size="7px" font-family="UniversNextPro-Light" fill="#dadada" text-anchor="end" id="semi1" transform="matrix(1 0 0 1 101.5 138.5)">0</text>
+  <path d="M0 0 H9 V2 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_12" transform="matrix(1 0 0 1 145 135.5)" />
+  <path d="M0 0 H9 V2 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_13" transform="matrix(1 0 0 1 145 135.5)" />
+  <path id="axisTick2" d="M0 0 H8" fill="none" stroke="#959595" stroke-width="0.7" transform="matrix(1 0 0 1 103 136)" />
+  <text font-size="7px" font-family="UniversNextPro-Light" fill="#dadada" text-anchor="end" id="semi2" transform="matrix(1 0 0 1 101.5 138.5)">0</text>
+  <path d="M0 0 H9 V2 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_14" transform="matrix(1 0 0 1 160 135.5)" />
+  <path d="M0 0 H9 V2 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_15" transform="matrix(1 0 0 1 160 135.5)" />
+  <path id="axisTick3" d="M0 0 H8" fill="none" stroke="#959595" stroke-width="0.7" transform="matrix(1 0 0 1 103 136)" />
+  <text font-size="7px" font-family="UniversNextPro-Light" fill="#dadada" text-anchor="end" id="semi3" transform="matrix(1 0 0 1 101.5 138.5)">0</text>
+  <path d="M0 0 H9 V2 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_16" transform="matrix(1 0 0 1 179 135.5)" />
+  <path d="M0 0 H9 V2 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_17" transform="matrix(1 0 0 1 179 135.5)" />
+  <path id="axisTick4" d="M0 0 H8" fill="none" stroke="#959595" stroke-width="0.7" transform="matrix(1 0 0 1 103 136)" />
+  <text font-size="7px" font-family="UniversNextPro-Light" fill="#dadada" text-anchor="end" id="semi4" transform="matrix(1 0 0 1 101.5 138.5)">0</text>
+  <path d="M0 0 H9 V2 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_18" transform="matrix(1 0 0 1 194 135.5)" />
+  <path d="M0 0 H9 V2 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_19" transform="matrix(1 0 0 1 194 135.5)" />
+  <path id="axisTick5" d="M0 0 H8" fill="none" stroke="#959595" stroke-width="0.7" transform="matrix(1 0 0 1 103 136)" />
+  <text font-size="7px" font-family="UniversNextPro-Light" fill="#dadada" text-anchor="end" id="semi5" transform="matrix(1 0 0 1 101.5 138.5)">0</text>
+  <path d="M0 0 H9 V2 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_20" transform="matrix(1 0 0 1 209 135.5)" />
+  <path d="M0 0 H9 V2 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_21" transform="matrix(1 0 0 1 209 135.5)" />
+  <path id="axisTick6" d="M0 0 H8" fill="none" stroke="#959595" stroke-width="0.7" transform="matrix(1 0 0 1 103 136)" />
+  <text font-size="7px" font-family="UniversNextPro-Light" fill="#dadada" text-anchor="end" id="semi6" transform="matrix(1 0 0 1 101.5 138.5)">0</text>
+  <path d="M0 0 H9 V2 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="hocket_dot_22" transform="matrix(1 0 0 1 224 135.5)" />
+  <path d="M0 0 H9 V2 H0 Z" fill="#161616" stroke="#777777" stroke-width="0.8" id="hocket_dot_23" transform="matrix(1 0 0 1 224 135.5)" />
+  <path id="axisTick7" d="M0 0 H8" fill="none" stroke="#959595" stroke-width="0.7" transform="matrix(1 0 0 1 103 136)" />
+  <text font-size="7px" font-family="UniversNextPro-Light" fill="#dadada" text-anchor="end" id="semi7" transform="matrix(1 0 0 1 101.5 138.5)">0</text>
+  <path d="M0 0 H4 V4 H0 Z" fill="#ff4949" stroke="#ff4949" stroke-width="0.8" id="cursor" transform="matrix(1 0 0 1 117 178)" />
   <path d="M0 0 H10 V0.7 H0 Z" fill="#aaaaaa" stroke="#aaaaaa" stroke-width="0.8" id="stem" transform="matrix(1 0 0 1 239 141)" />
   <path d="M249 141 L272 117 H354 M349 114 L354 117 L349 120" fill="none" stroke="#414141" stroke-width="1.1" id="branchOff0" transform="matrix(1 0 0 1 0 0)" />
   <path d="M249 141 L272 117 H354 M349 114 L354 117 L349 120" fill="none" stroke="#aaaaaa" stroke-width="1.1" id="branchOn0" transform="matrix(1 0 0 1 0 0)" />

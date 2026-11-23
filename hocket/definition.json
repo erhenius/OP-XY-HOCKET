@@ -35,29 +35,50 @@
     {
       "id": "rate",
       "label": "Rate",
-      "default": 0.375,
+      "default": 0.2569427490234375,
       "display": "enum",
       "mapping": {
         "kind": "enum",
         "labels": [
           "1_32",
+          "1_32 dot",
           "1_16",
+          "1_16 dot",
           "1_8",
-          "1_4"
+          "1_8 dot",
+          "1_4",
+          "1_4 dot",
+          "1_2"
         ]
       }
     },
     {
       "id": "gate",
       "label": "Gate",
-      "default": 0.375,
+      "default": 0.4656219482421875,
       "display": "enum",
       "mapping": {
         "kind": "enum",
         "labels": [
+          "5 pct",
+          "10 pct",
+          "15 pct",
+          "20 pct",
           "25 pct",
+          "30 pct",
+          "35 pct",
+          "40 pct",
+          "45 pct",
           "50 pct",
+          "55 pct",
+          "60 pct",
+          "65 pct",
+          "70 pct",
           "75 pct",
+          "80 pct",
+          "85 pct",
+          "90 pct",
+          "95 pct",
           "100 pct"
         ]
       }

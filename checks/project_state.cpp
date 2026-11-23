@@ -63,7 +63,8 @@ static void set_track(u32 t,u32 variant) {
     auto& s=setups.track(active,t);
     for (u32 k=0;k<4;++k) s.routeWords[k]=s.centre(k,(t+variant+k)%s.count(k));
     s.flags=(t^variant)&13; s.grid.tail=(t+variant)%6;
-    s.grid.shuffle=(t+variant)&1; s.grid.transpose=static_cast<i32>(t+variant)-20;
+    s.grid.shuffle=(t+variant)&1; s.grid.fork=(t+variant)%15;
+    s.grid.swing=static_cast<i32>((t*5+variant)%39)-19; s.grid.nudge=(2*t+variant)%21;
     s.grid.pattern().changedMask=t*7+variant;
     for (u32 k=0;k<8;++k) s.grid.pattern().set_pitch(k,static_cast<i32>(t+variant+k)-18);
 }
@@ -76,7 +77,41 @@ static void load_project(const char* path,const u8* old,const u8* next) {
     assert(sdk_project_load(inactive,path)); check(old);
     active=inactive; check(next);
 }
+static void read_section(const char* section) {
+    FILE* f=std::fopen("legacy-section.json","w+b");
+    assert(f); std::fputs(section,f); std::rewind(f);
+    Parser parser(f); assert(read_hocket(parser) && hocket_present);
+    std::fclose(f);
+}
+
+// Frozen v1 wire fixture: distinct routing, transpose and pitches on every track.
+static void check_legacy_project() {
+    read_section(R"({"version":1,"data":"AQMAER0EAKUwMTIzNDU2NwIDABEdBAalMTIzNDU2NzgDAwARHQQMpTIzNDU2Nzg5BAMAER0EEqUzNDU2Nzg5OgUDABEdBBilNDU2Nzg5OjsGAwARHQQepTU2Nzg5Ojs8BwMAER0EJKU2Nzg5Ojs8PQgDABEdBCqlNzg5Ojs8PT4="})");
+    for (u32 t=0;t<8;++t) {
+        hocket_settings::Track restored={};
+        auto record=hocket_data+t*hocket_settings::width;
+        assert(restored.valid(record));
+        restored.decode(record);
+        assert(player::choice(restored.route(0),9)==t+1 && restored.grid.tail==4);
+        assert(restored.grid.mask()==0xa5 && restored.grid.shuffle && restored.flags==13);
+        for (u32 j=0;j<8;++j) assert(restored.grid.pitch(j)==static_cast<i32>(t+j));
+        assert(!restored.grid.fork && !restored.grid.swing && !restored.grid.nudge);
+    }
+}
+static void check_v2_swing() {
+    read_section(R"({"version":2,"data":"AQMAER0EAKUwMTIzNDU2NwAUAgMAER0EAaUwMTIzNDU2NwETAwMAER0EAqUwMTIzNDU2NwISBAMAER0EA6UwMTIzNDU2NwMRBQMAER0EBKUwMTIzNDU2NwQQBgMAER0EBaUwMTIzNDU2NwUPBwMAER0EBqUwMTIzNDU2NwYOCAMAER0EB6UwMTIzNDU2NwAN"})");
+    const u32 old_percent[]={50,55,60,65,67,70,75};
+    for (u32 t=0;t<8;++t) {
+        hocket_settings::Track restored={};
+        const u8* record=hocket_data+t*hocket_settings::width;
+        assert(restored.valid(record)); restored.decode(record);
+        assert(restored.grid.nudge==20-t && restored.grid.fork==t);
+        assert(hocket::swing_magnitude(restored.grid.swing)==2*old_percent[t%7]-100);
+    }
+}
 int main() {
+    check_v2_swing();
+    check_legacy_project();
     u8 a[hocket_settings::bytes],b[sizeof a],defaults[sizeof a];
     setups.save(active,defaults);
     for (u32 t=0;t<8;++t) set_track(t,1);

@@ -1,9 +1,9 @@
 diff --git a/sdk/platform/opxy-1.2.1/hocket_panel.hpp b/sdk/platform/opxy-1.2.1/hocket_panel.hpp
 new file mode 100644
-index 0000000..dfbc398
+index 0000000..7f1bb8c
 --- /dev/null
 +++ b/sdk/platform/opxy-1.2.1/hocket_panel.hpp
-@@ -0,0 +1,401 @@
+@@ -0,0 +1,418 @@
 +#pragma once
 +namespace hocket_panel {
 +enum Node {
@@ -60,6 +60,14 @@ index 0000000..dfbc398
 +    stepOn7,
 +    stepOff7,
 +    semi7,
++    axisTick0,
++    axisTick1,
++    axisTick2,
++    axisTick3,
++    axisTick4,
++    axisTick5,
++    axisTick6,
++    axisTick7,
 +    cursor,
 +    stem,
 +    branchOff0,
@@ -244,6 +252,14 @@ index 0000000..dfbc398
 +    {"hocket_dot_22",false},
 +    {"hocket_dot_23",false},
 +    {"semi7",true},
++    {"axisTick0",false},
++    {"axisTick1",false},
++    {"axisTick2",false},
++    {"axisTick3",false},
++    {"axisTick4",false},
++    {"axisTick5",false},
++    {"axisTick6",false},
++    {"axisTick7",false},
 +    {"cursor",false},
 +    {"stem",false},
 +    {"branchOff0",false},
@@ -379,6 +395,7 @@ index 0000000..dfbc398
 +static const Node laneIds[]={lane0, lane1, lane2, lane3, lane4, lane5, lane6, lane7};
 +static const Node stepOnIds[]={stepOn0, stepOn1, stepOn2, stepOn3, stepOn4, stepOn5, stepOn6, stepOn7};
 +static const Node stepOffIds[]={stepOff0, stepOff1, stepOff2, stepOff3, stepOff4, stepOff5, stepOff6, stepOff7};
++static const Node axisTickIds[]={axisTick0, axisTick1, axisTick2, axisTick3, axisTick4, axisTick5, axisTick6, axisTick7};
 +static const Node semiIds[]={semi0, semi1, semi2, semi3, semi4, semi5, semi6, semi7};
 +static const Node branchOffIds[]={branchOff0, branchOff1};
 +static const Node branchOnIds[]={branchOn0, branchOn1};
@@ -404,6 +421,63 @@ index 0000000..dfbc398
 +static const Node gridPressIds[]={gridPress0, gridPress1, gridPress2, gridPress3};
 +static const Node gridPressBracketIds[]={gridPress0Br, gridPress1Br, gridPress2Br, gridPress3Br};
 +static const Node gridFootIds[]={gridFoot0, gridFoot1, gridFoot2, gridFoot3};
++}
+diff --git a/sdk/platform/opxy-1.2.1/hocket_pitch_axis.hpp b/sdk/platform/opxy-1.2.1/hocket_pitch_axis.hpp
+new file mode 100644
+index 0000000..af7f0cc
+--- /dev/null
++++ b/sdk/platform/opxy-1.2.1/hocket_pitch_axis.hpp
+@@ -0,0 +1,51 @@
++// Coordinates in Q10 screen units. Mark positions are linear in semitones;
++// only the text moves when neighbouring labels need more space.
++#pragma once
++#include <opxy/types.hpp>
++namespace hocket_axis {
++using namespace opxy;
++constexpr i32 unit=1024;
++struct Axis {
++    i32 pitches[8], labels[8];
++    u32 count;
++    i32 mark(i32 pitch) const {
++        if (count<2) return 136*unit;
++        const i32 range=pitches[0]-pitches[count-1];
++        return 99*unit+(pitches[0]-pitch)*74*unit/range;
++    }
++    bool contains(i32 pitch) const {
++        return count && pitch<=pitches[0] && pitch>=pitches[count-1];
++    }
++    void build(const i32* steps,u32 enabled) {
++        count=0;
++        for (u32 slot=0;slot<8;++slot) {
++            if (!(enabled&(1u<<slot))) continue;
++            const i32 p=steps[slot];
++            u32 i=0;
++            while (i<count && pitches[i]>p) ++i;
++            if (i<count && pitches[i]==p) continue;
++            for (u32 j=count;j>i;--j) pitches[j]=pitches[j-1];
++            pitches[i]=p; ++count;
++        }
++        // Pool adjacent overlapping groups and split them with an eight-unit gap.
++        i32 sums[8], sizes[8]; u32 groups=0;
++        constexpr i32 gap=8*unit;
++        for (u32 i=0;i<count;++i) {
++            sums[groups]=mark(pitches[i])-static_cast<i32>(i)*gap;
++            sizes[groups++]=1;
++            while (groups>1 && sums[groups-2]*sizes[groups-1]>sums[groups-1]*sizes[groups-2]) {
++                sums[groups-2]+=sums[groups-1];
++                sizes[groups-2]+=sizes[groups-1];
++                --groups;
++            }
++        }
++        const i32 low=95*unit, high=177*unit-(static_cast<i32>(count)-1)*gap;
++        u32 index=0;
++        for (u32 i=0;i<groups;++i) {
++            const i32 mean=sums[i]/sizes[i];
++            const i32 origin=mean<low?low:(mean>high?high:mean);
++            for (i32 j=0;j<sizes[i];++j,++index) labels[index]=origin+static_cast<i32>(index)*gap;
++        }
++    }
++};
 +}
 diff --git a/sdk/platform/opxy-1.2.1/hocket_probe.cpp b/sdk/platform/opxy-1.2.1/hocket_probe.cpp
 new file mode 100644
@@ -816,17 +890,18 @@ index 0000000..b3415d8
 +}
 diff --git a/sdk/platform/opxy-1.2.1/hocket_project_format.hpp b/sdk/platform/opxy-1.2.1/hocket_project_format.hpp
 new file mode 100644
-index 0000000..d38924c
+index 0000000..ef8cf28
 --- /dev/null
 +++ b/sdk/platform/opxy-1.2.1/hocket_project_format.hpp
-@@ -0,0 +1,2 @@
+@@ -0,0 +1,3 @@
 +#pragma once
-+namespace hocket_format { constexpr unsigned hocket_bytes=128, hocket_reserve=240; }
++namespace hocket_format { constexpr unsigned old_track_bytes=16, track_bytes=18, track_count=8;
++constexpr unsigned hocket_bytes=track_bytes*track_count, hocket_reserve=264; }
 diff --git a/sdk/platform/opxy-1.2.1/hocket_renderer.hpp b/sdk/platform/opxy-1.2.1/hocket_renderer.hpp
-index f5e49b1..22c515b 100644
+index f5e49b1..c93c108 100644
 --- a/sdk/platform/opxy-1.2.1/hocket_renderer.hpp
 +++ b/sdk/platform/opxy-1.2.1/hocket_renderer.hpp
-@@ -15,20 +15,54 @@ static const char* pitch_text(opxy::i32 n) {
+@@ -15,20 +15,98 @@ static const char* pitch_text(opxy::i32 n) {
  }
 -#include "hocket_grid_view.hpp"
 +#include "hocket_panel.hpp"
@@ -854,7 +929,51 @@ index f5e49b1..22c515b 100644
 -        u32 watchedTrack, watchedClock, changedAt;
 -        bool watchingClock;
 +        Item items[hocket_panel::nodeCount];
-+        bool editorOpen;
++        bool editorOpen, chartReady, chartVisible;
++        u32 chartMask;
++        i32 chartPitches[8];
++        // Only positions that depend on a fractional semitone scale use Q10.
++        void plot(Node id,bool visible,i32 dy=0,i32 slope=0) {
++            const Item& item=items[id];
++            if (!item.node) return;
++            const u32 at[]={1,6,7};
++            const i32 value[]={slope,item.x+(visible?0:640*1024),item.y+dy};
++            opxy::screen::set_words(item.node,at,value);
++        }
++        void chart(const hocket::Grid& grid,bool visible) {
++            using namespace hocket_panel;
++            constexpr i32 unit=hocket_axis::unit, home=136*unit;
++            const u32 mask=grid.mask();
++            bool changed=!chartReady || visible!=chartVisible || chartMask!=mask;
++            for (u32 i=0;i<8;++i) {
++                const i32 pitch=grid.pitch(i);
++                if (chartPitches[i]!=pitch) changed=true;
++                chartPitches[i]=pitch;
++            }
++            if (!changed) return;
++            chartReady=true; chartVisible=visible; chartMask=mask;
++            hocket_axis::Axis axis;
++            axis.build(chartPitches,visible?mask:0);
++            bool root=false;
++            for (u32 i=0;i<8;++i) {
++                const bool active=(mask&(1u<<i))!=0;
++                const bool inRange=axis.contains(chartPitches[i]);
++                const i32 dy=inRange?axis.mark(chartPitches[i])-home:0;
++                show(laneIds[i],visible);
++                plot(stepOnIds[i],inRange && active,dy);
++                plot(stepOffIds[i],inRange && !active,dy);
++                if (i<axis.count) {
++                    const i32 mark=axis.mark(axis.pitches[i]), label=axis.labels[i];
++                    plot(semiIds[i],true,label-home);
++                    text(semiIds[i],pitch_text(axis.pitches[i]));
++                    plot(axisTickIds[i],true,label-home,(mark-label)/8);
++                    root|=axis.pitches[i]==0;
++                } else {
++                    plot(semiIds[i],false); plot(axisTickIds[i],false);
++                }
++            }
++            plot(zeroLine,root,root?axis.mark(0)-home:0);
++        }
 +        void show(Node id,bool visible,i32 dx=0,i32 dy=0) {
 +            Item& item=items[id];
 +            if (!item.node) return;
@@ -896,7 +1015,7 @@ index f5e49b1..22c515b 100644
 +            editorOpen=open;
 +        }
      };
-@@ -36,110 +70,108 @@ struct Renderer {
+@@ -36,110 +114,107 @@ struct Renderer {
          using namespace opxy::screen;
 +        using namespace hocket_panel;
          clear(o);
@@ -917,19 +1036,21 @@ index f5e49b1..22c515b 100644
 +            if (binding.text) item.node=text_node(raw);
 +            else if (PathNode* p=path_node(raw)) item.node=&p->leaf;
 +            if (item.node) { item.x=item.node->matrix[6]; item.y=item.node->matrix[7]; }
-+        }
-+        for (u32 i=0;i<8;++i) {
-+            o->centre_in_cell(inkIds[i],cellOnIds[i]);
-+            o->centre_in_cell(dimIds[i],cellOnIds[i]);
          }
 -        o->editor.init(&o->base);
 -        o->diagnostic=text_node(find(&o->base,"release_status"));
 -        o->lastDiagnostic=~0u;
 -        o->lit=~0u;
++        for (u32 i=0;i<8;++i) {
++            o->centre_in_cell(inkIds[i],cellOnIds[i]);
++            o->centre_in_cell(dimIds[i],cellOnIds[i]);
++        }
++        for (u32 i=0;i<8;++i)
++            if (Leaf* label=o->items[semiIds[i]].node) opxy::screen::set_text_anchor(label,2);
++        o->chartReady=false;
 +        o->editorOpen=true;
 +        o->editor(false);
-     }
--    static void frame(Object* o, i32) {
++    }
 +    static void edit(Object& o,const hocket::Grid& grid,bool shift,bool spray,u32 cursor) {
 +        using namespace hocket_panel;
 +        const bool armed=grid.capture.armed();
@@ -956,7 +1077,8 @@ index f5e49b1..22c515b 100644
 +        o.footer(1,true,armed?"":"Playhead");
 +        o.footer(2,true,armed?"Keep":"Capture");
 +        o.footer(3,true,armed?"Cancel":(grid.editEnabled?"Edit on/off":"Edit pitch"));
-+    }
+     }
+-    static void frame(Object* o, i32) {
 +    static void frame(Object* o,i32) {
          using namespace opxy::screen;
          using namespace hocket;
@@ -993,20 +1115,7 @@ index f5e49b1..22c515b 100644
 -            case Route::missing: hint=messages[2][s.routeTrack]; break;
 -            case Route::received: hint=messages[3][s.routeTrack]; break;
 -            case Route::full: hint="Hocket queue full"; break;
-+        const Playhead mode=playhead(c);
-+        const bool note=mode==Playhead::note, spray=mode==Playhead::spray, shift=c.shift;
-+        o->editor(grid.page!=0);
-+        if (grid.page) { edit(*o,grid,shift,spray,s.cursor); opxy::screen::draw(&o->base); return; }
-+        o->text(pageName,shift?"handoffs":"playhead");
-+        o->show(shiftBadge,shift); o->show(shiftBadgeText,shift);
-+        const char* values[]={note?"Note":(spray?"Spray":"Arp"),pitch_text(grid.transpose),
-+                              rates[choice(c.value[2],4)],note?"Held":gates[choice(c.value[3],4)]};
-+        for (u32 i=0;i<4;++i) {
-+            const bool visible=i==0 || i==3 || (i==1?spray:!note);
-+            o->show(mainLabelIds[i],visible); o->show(mainValueIds[i],visible);
-+            o->show(mainKnobIds[i],visible && !shift && !(i==3 && note));
-+            if (visible) o->text(mainValueIds[i],values[i]);
-         }
+-        }
 -        if (c.shift && s.eventCount) {
 -            const u32 now=sdk_voice_ticks();
 -            if (!o->watchingClock || track!=o->watchedTrack || s.clock!=o->watchedClock) {
@@ -1032,16 +1141,23 @@ index f5e49b1..22c515b 100644
 -            if (!o->labels[i] || o->previous[i]==values[i]) continue;
 -            set_text(o->labels[i],values[i]);
 -            o->previous[i]=values[i];
-+        for (u32 i=0;i<3;++i) o->show(modeIconIds[i],i==static_cast<u32>(mode));
-+        o->text(originTrack,tracks[track+1]); o->show(noteWire,note); o->show(zeroLine,!note);
-+        for (u32 i=0;i<8;++i) {
-+            const bool enabled=(grid.mask()&(1u<<i))!=0;
-+            const i32 pitch=grid.pitch(i);
-+            // Keep the extreme +/-48 labels inside the lane at native resolution.
-+            const i32 dy=-(pitch*5/8);
-+            o->show(laneIds[i],!note); o->show(stepOnIds[i],!note && enabled,0,dy);
-+            o->show(stepOffIds[i],!note && !enabled,0,dy); o->show(semiIds[i],!note,0,dy);
-+            if (!note) o->text(semiIds[i],pitch_text(pitch));
++        const Playhead mode=playhead(c);
++        const bool note=mode==Playhead::note, spray=mode==Playhead::spray, shift=c.shift;
++        o->editor(grid.page!=0);
++        if (grid.page) { edit(*o,grid,shift,spray,s.cursor); opxy::screen::draw(&o->base); return; }
++        o->text(pageName,shift?"handoffs":"playhead");
++        o->show(shiftBadge,shift); o->show(shiftBadgeText,shift);
++        static const char* const forks[]={"Off","16","24","32","40","48","56","64","72","80","88","96","104","112","120"};
++        static const char* const swings[]={"-95%","-90%","-85%","-80%","-75%","-70%","-65%","-60%","-55%","-50%","-45%","-40%","-34%","-30%","-25%","-20%","-15%","-10%","-5%","0%","+5%","+10%","+15%","+20%","+25%","+30%","+34%","+40%","+45%","+50%","+55%","+60%","+65%","+70%","+75%","+80%","+85%","+90%","+95%"};
++        static const char* const nudges[]={"0%","5%","10%","15%","20%","25%","30%","35%","40%","45%","50%","55%","60%","65%","70%","75%","80%","85%","90%","95%","100%"};
++        o->text(mainLabelIds[1],note?"Vel fork":(spray?"Nudge":"Swing"));
++        const char* values[]={note?"Note":(spray?"Spray":"Arp"),note?forks[grid.fork]:(spray?nudges[grid.nudge]:swings[grid.swing+swingMax]),
++                              rates[timing_index<rateChoices>(c.value[2])],note?"Held":gates[timing_index<gateChoices>(c.value[3])]};
++        for (u32 i=0;i<4;++i) {
++            const bool visible=i!=2 || !note;
++            o->show(mainLabelIds[i],visible); o->show(mainValueIds[i],visible);
++            o->show(mainKnobIds[i],visible && !shift && !(i==3 && note));
++            if (visible) o->text(mainValueIds[i],values[i]);
          }
 -        if (o->diagnostic) {
 -            u32 status=0;
@@ -1075,8 +1191,11 @@ index f5e49b1..22c515b 100644
 -                set_words(o->shapes[i],at,value);
 -            }
 -            o->lit=lit;
++        for (u32 i=0;i<3;++i) o->show(modeIconIds[i],i==static_cast<u32>(mode));
++        o->text(originTrack,tracks[track+1]); o->show(noteWire,note);
++        o->chart(grid,!note);
 +        const u32 slot=s.cursor?s.cursor-1:0;
-+        o->show(cursor,!note && s.cursor && s.cursor<=8,slot*19+(slot>=4?3:0));
++        o->show(cursor,!note && s.cursor && s.cursor<=8,slot*15+(slot>=4?4:0));
 +        for (u32 i=0;i<2;++i) {
 +            const u32 target=choice(c.shift_value[2*i],9);
 +            o->show(branchOnIds[i],target); o->show(branchOffIds[i],!target);
@@ -1103,16 +1222,17 @@ index f5e49b1..22c515b 100644
          opxy::screen::draw(&o->base);
 diff --git a/sdk/platform/opxy-1.2.1/hocket_settings.hpp b/sdk/platform/opxy-1.2.1/hocket_settings.hpp
 new file mode 100644
-index 0000000..76515d1
+index 0000000..eee9aee
 --- /dev/null
 +++ b/sdk/platform/opxy-1.2.1/hocket_settings.hpp
-@@ -0,0 +1,80 @@
+@@ -0,0 +1,84 @@
 +// Included after the machine's Grid definition by its native player adapter.
 +#pragma once
 +#include "player_controls.hpp"
++#include "hocket_project_format.hpp"
 +namespace hocket_settings {
 +using namespace opxy;
-+enum { tracks=8, width=16, bytes=tracks*width };
++enum { tracks=hocket_format::track_count, width=hocket_format::track_bytes, bytes=tracks*width };
 +struct Track {
 +    hocket::Grid grid;
 +    i32 routeWords[4];
@@ -1133,13 +1253,15 @@ index 0000000..76515d1
 +        for (u32 k=0;k<4;++k) out[k]=player::choice(route(k),count(k));
 +        out[4]=flags|(grid.shuffle?16:0);
 +        out[5]=grid.tail;
-+        out[6]=grid.transpose+24;
++        out[6]=grid.fork;
++        out[16]=grid.swing+hocket::swingMax; out[17]=grid.nudge;
 +        out[7]=grid.mask();
 +        for (u32 k=0;k<8;++k) out[8+k]=grid.pitch(k)+48;
 +    }
 +    static bool valid(const u8* in) {
 +        for (u32 k=0;k<4;++k) if (in[k]>=count(k)) return false;
-+        if ((in[4]&~29u) || in[5]>=hocket::spray_choices || in[6]>48) return false;
++        if ((in[4]&~29u) || in[5]>=hocket::spray_choices || in[6]>hocket::forkMax ||
++            in[16]>2*hocket::swingMax || in[17]>hocket::nudgeMax) return false;
 +        for (u32 k=0;k<8;++k) if (in[8+k]>96) return false;
 +        return true;
 +    }
@@ -1147,7 +1269,8 @@ index 0000000..76515d1
 +        for (u32 k=0;k<4;++k) routeWords[k]=centre(k,in[k]);
 +        flags=in[4]&13;
 +        grid.shuffle=in[4]&16;
-+        grid.tail=in[5]; grid.transpose=static_cast<i32>(in[6])-24;
++        grid.tail=in[5]; grid.fork=in[6];
++        grid.swing=static_cast<i32>(in[16])-hocket::swingMax; grid.nudge=in[17];
 +        grid.pattern().changedMask=in[7]^15;
 +        for (u32 k=0;k<8;++k) grid.pattern().set_pitch(k,static_cast<i32>(in[8+k])-48);
 +    }
@@ -1199,17 +1322,18 @@ index 05f69e3..1b9e38b 100644
 +    if (sdk_hocket_save) budget=budget>hocket_format::hocket_reserve?budget-hocket_format::hocket_reserve:0;
      saved_limit = 0;
 diff --git a/sdk/platform/opxy-1.2.1/player_object.cpp.in b/sdk/platform/opxy-1.2.1/player_object.cpp.in
-index d69a3f9..4b2424b 100644
+index d69a3f9..9615c55 100644
 --- a/sdk/platform/opxy-1.2.1/player_object.cpp.in
 +++ b/sdk/platform/opxy-1.2.1/player_object.cpp.in
-@@ -7,2 +7,6 @@
+@@ -7,2 +7,7 @@
  #include "players.hpp"
 +#ifdef OPXY_HOCKET_PLAYER
 +#include "hocket_probe.hpp"
 +#include "hocket_settings.hpp"
++#include "hocket_pitch_axis.hpp"
 +#endif
  #include "stock.hpp"
-@@ -45,4 +49,29 @@ static u32 routing_mode(void*) { return 0; }
+@@ -45,4 +50,29 @@ static u32 routing_mode(void*) { return 0; }
  opxy::u32 sdk_voice_ticks() __asm__("sdk_voice_ticks");
 -static hocket::Grid grids[8];
 -static void editor_init(u32 track) { grids[track]=hocket::Grid{}; }
@@ -1241,7 +1365,7 @@ index d69a3f9..4b2424b 100644
 +    if (g.capture.armed()) ++g.capture.session;
 +}
  static bool spray_controls(u32 track) {
-@@ -51,17 +80,32 @@ static bool spray_controls(u32 track) {
+@@ -51,17 +81,45 @@ static bool spray_controls(u32 track) {
  }
 -static bool editor_click(u32 track,u32 k) {
 -    hocket::Grid& g=grids[track];
@@ -1266,37 +1390,49 @@ index d69a3f9..4b2424b 100644
 +    else if (!g.click(k) && k<4) setup.flags^=1u<<k;
 +    mark_edit(setup,before);
 +    return true;
++}
++static inline opxy::i32 editor_enum_turn(u32 slot,opxy::i32 word,u32 choices,opxy::i32 detents) {
++    if (slot==2) return hocket::turn_timing<hocket::rateChoices>(word,detents);
++    if (slot==3) return hocket::turn_timing<hocket::gateChoices>(word,detents);
++    return opxy::platform::player_enum_turn(word,choices,detents);
  }
  static bool editor_turn(u32 track,u32 k,opxy::i32 delta,bool shift) {
 -    hocket::Grid& g=grids[track];
 -    if (!g.page && !shift && k==1 && spray_controls(track)) {
 -        g.turn_transpose(delta);
 -        return true;
--    }
--    return g.turn(k,delta,shift);
 +    auto& setup=settings(track);
 +    auto& g=setup.grid;
-+    if (!g.page && !shift && (k!=1 || !spray_controls(track))) return false;
++    if (!g.page && !shift && k!=1) return false;
 +    opxy::u8 before[hocket_settings::width];
 +    setup.encode(before);
 +    if (!g.page && shift && k<4)
 +        setup.routeWords[k]=opxy::platform::player_enum_turn(setup.route(k),setup.count(k),delta);
-+    else if (!g.page) g.turn_transpose(delta);
++    else if (!g.page) {
++        void* object=opxy::platform::player_object(track,@PREFIX@_player_vtable);
++        if (!object) return false;
++        switch (hocket::playhead(opxy::platform::player_controls(object))) {
++        case hocket::Playhead::note: g.turn_setting(g.fork,delta,hocket::forkMax); break;
++        case hocket::Playhead::arp: g.turn_setting(g.swing,delta,hocket::swingMax,-hocket::swingMax); break;
++        case hocket::Playhead::spray: g.turn_setting(g.nudge,delta,hocket::nudgeMax); break;
++        }
+     }
+-    return g.turn(k,delta,shift);
 +    else g.turn(k,delta,shift);
 +    mark_edit(setup,before);
 +    return true;
  }
-@@ -71,2 +115,4 @@ static void maintain_clock(void* object) {
+@@ -71,2 +129,4 @@ static void maintain_clock(void* object) {
  }
 +// A new player object may reuse a track while older synth voices still release.
 +static u32 phraseSequences[8];
  struct HandoffPort {
-@@ -75,3 +121,3 @@ struct HandoffPort {
+@@ -75,3 +135,3 @@ struct HandoffPort {
      u32 track() const { return static_cast<const u32*>(object)[1]; }
 -    opxy::player::Controls controls() const { return opxy::platform::player_controls(object); }
 +    opxy::player::Controls controls() const { return authored_controls(object); }
      HandoffPort at(u32 dest) const {
-@@ -81,5 +127,9 @@ struct HandoffPort {
+@@ -81,5 +141,9 @@ struct HandoffPort {
      u32 time_stamp() const { return sdk_voice_ticks(); }
 -    hocket::Grid& grid() const { return grids[track()]; }
 +    hocket::Grid& grid() const { return settings(track()).grid; }
@@ -1308,11 +1444,11 @@ index d69a3f9..4b2424b 100644
 +    }
 +    void on(u32 pitch, opxy::u8 velocity, u32 source, u32 owner,u32 fade,u32 start) {
          opxy::player::Plan plan;
-@@ -88,2 +138,3 @@ struct HandoffPort {
+@@ -88,2 +152,3 @@ struct HandoffPort {
          opxy::platform::play_plan(object, pitch, plan);
 +        if (owner) sdk_hprobe_stamp(object,track(),pitch,source,owner,fade,start);
      }
-@@ -154,3 +205,7 @@ static void step_player(void* object) {
+@@ -154,3 +219,7 @@ static void step_player(void* object) {
  #endif
 +#ifdef OPXY_HOCKET_PLAYER
 +    sdk_hprobe_step(object);
@@ -1320,8 +1456,28 @@ index d69a3f9..4b2424b 100644
      opxy::platform::stock<void(void*)>(opxy::platform::kMaestroStep)(object);
 +#endif
  #ifdef OPXY_HOCKET_PLAYER
+diff --git a/sdk/platform/opxy-1.2.1/players.cpp b/sdk/platform/opxy-1.2.1/players.cpp
+index a5eb1bf..4296c6d 100644
+--- a/sdk/platform/opxy-1.2.1/players.cpp
++++ b/sdk/platform/opxy-1.2.1/players.cpp
+@@ -296,4 +296,5 @@ u32 sdk_player_turn(u32 index, const opxy::i32* event) {
+         const opxy::i32 value = stock<const opxy::i32*(u32)>(kParameters)(track)[slot];
+-        stock<void(u32, u32, opxy::i32)>(0x8d586474)(track, slot,
+-            player_enum_turn(value, choices, event[1]));
++        const opxy::i32 next=p->enum_turn ? p->enum_turn(slot,value,choices,event[1]) :
++                                           player_enum_turn(value,choices,event[1]);
++        stock<void(u32, u32, opxy::i32)>(0x8d586474)(track,slot,next);
+     }
+diff --git a/sdk/platform/opxy-1.2.1/players.hpp b/sdk/platform/opxy-1.2.1/players.hpp
+index 5661ce0..81042a7 100644
+--- a/sdk/platform/opxy-1.2.1/players.hpp
++++ b/sdk/platform/opxy-1.2.1/players.hpp
+@@ -42,2 +42,3 @@ struct Player {
+     const PlayerShift* shift;  // its shift row, or null
++    i32 (*enum_turn)(u32 slot,i32 word,u32 choices,i32 detents);
+     u32 type() const { return static_cast<u32>(reinterpret_cast<__UINTPTR_TYPE__>(type_id)); }
 diff --git a/sdk/platform/opxy-1.2.1/project_companion.cpp b/sdk/platform/opxy-1.2.1/project_companion.cpp
-index c61a0cc..920353a 100644
+index c61a0cc..d9b0d0b 100644
 --- a/sdk/platform/opxy-1.2.1/project_companion.cpp
 +++ b/sdk/platform/opxy-1.2.1/project_companion.cpp
 @@ -55,2 +55,10 @@ namespace {
@@ -1338,7 +1494,7 @@ index c61a0cc..920353a 100644
 @@ -156,2 +164,15 @@ private:
  
 +void write_hocket(Writer& w,const opxy::u8* data) {
-+    w.put("    \"open-xy.hocket\": {\"version\":1,\"data\":\"");
++    w.put("    \"open-xy.hocket\": {\"version\":3,\"data\":\"");
 +    const char abc[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 +    for (u32 i=0;i<hocket_bytes;i+=3) {
 +        const u32 b=i+1<hocket_bytes?data[i+1]:0, c=i+2<hocket_bytes?data[i+2]:0;
@@ -1363,7 +1519,7 @@ index c61a0cc..920353a 100644
      sdk_project_kept(file);
 +    if (hocket) { write_hocket(w,hocket); w.flush(); }
      if (locks) sdk_project_locks_write(file);
-@@ -737,2 +760,23 @@ bool binding_member(Parser& p, u32& bytes, u32& crc, bool& valid) {
+@@ -737,2 +760,47 @@ bool binding_member(Parser& p, u32& bytes, u32& crc, bool& valid) {
  
 +opxy::u8 hocket_data[hocket_bytes];
 +bool hocket_present, hocket_bound;
@@ -1382,44 +1538,68 @@ index c61a0cc..920353a 100644
 +            ++count;
 +        },data_ok);
 +    });
-+    hocket_present=read && version_ok && version==1 && data_ok && count==hocket_bytes;
++    if (read && version_ok && data_ok) {
++        hocket_present=version==3 && count==hocket_bytes;
++        if (version==2 && count==hocket_bytes) {
++            // Old 50,55,60,65,67,70,75 pair percentages in the signed scale.
++            const opxy::u8 savedSwing[]={19,21,23,25,26,27,29};
++            for (u32 t=0;t<track_count;++t) {
++                auto& swing=hocket_data[t*track_bytes+16];
++                if (swing>=sizeof savedSwing) return read;
++                swing=savedSwing[swing];
++            }
++            hocket_present=true;
++        }
++        if (version==1 && count==old_track_bytes*track_count) {
++            // Expand from the end so the unread 16-byte records stay intact.
++            for (u32 t=track_count;t--;) {
++                auto* dst=hocket_data+t*track_bytes;
++                auto* src=hocket_data+t*old_track_bytes;
++                if (src[6]>48) return read;
++                for (u32 i=old_track_bytes;i--;) dst[i]=src[i];
++                dst[16]=19; // Straight on the signed swing scale.
++                dst[6]=dst[17]=0; // Discard legacy Spray transpose.
++            }
++            hocket_present=true;
++        }
++    }
 +    return read;
 +}
 +
  // Any other owner's section: false only for malformed JSON; `ok` says it is an object
-@@ -874,2 +918,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
+@@ -874,2 +942,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
          // Only the last sections object counts.
 +        hocket_present=false;
          applies = false;
-@@ -884,2 +929,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
+@@ -884,2 +953,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
          const bool members = p.object([&](const Text& name) {
 +            if (sdk_hocket_load && name.is("open-xy.hocket")) return read_hocket(p);
              if (!section_name(name)) {
-@@ -913,2 +959,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
+@@ -913,2 +983,3 @@ bool read_document(File* file, u32& bytes, u32& crc, bool& applies) {
  void remap(unsigned char* project) {
 +    hocket_bound=hocket_present;
      for (u32 track = 0; track < 16; ++track) {
-@@ -929,2 +976,3 @@ void remap(unsigned char* project) {
+@@ -929,2 +1000,3 @@ void remap(unsigned char* project) {
  bool apply_companion(void* project, const char* path) {
 +    hocket_bound=hocket_present=false;
      if (!companion_path(path, read_companion_path)) return false;
-@@ -947,2 +995,6 @@ bool apply_companion(void* project, const char* path) {
+@@ -947,2 +1019,6 @@ bool apply_companion(void* project, const char* path) {
  u32 sdk_project_save(void* project, const char* path) {
 +    // Capture the matching Hocket settings while entering stock serialization.
 +    // Later edits and project changes during file I/O belong to the next save.
 +    opxy::u8 hocket[hocket_bytes];
 +    const bool captured=path && sdk_hocket_save && sdk_hocket_save(project,hocket);
      const u32 saved = save(project, path);
-@@ -950,3 +1002,3 @@ u32 sdk_project_save(void* project, const char* path) {
+@@ -950,3 +1026,3 @@ u32 sdk_project_save(void* project, const char* path) {
      if (saved && path && companion_path(path, companion) && measure(path, chunk, bytes, crc))
 -        write_companion(project, bytes, crc);
 +        write_companion(project, bytes, crc, captured?hocket:nullptr);
      return saved;
-@@ -962,2 +1014,3 @@ u32 sdk_project_load(void* project, const char* path) {
+@@ -962,2 +1038,3 @@ u32 sdk_project_load(void* project, const char* path) {
          sdk_project_locks_loaded(project, apply_companion(project, path));
 +        if (sdk_hocket_load) sdk_hocket_load(project,hocket_bound?hocket_data:nullptr);
          sdk_project_loaded(path);
-@@ -966 +1019,26 @@ u32 sdk_project_load(void* project, const char* path) {
+@@ -966 +1043,26 @@ u32 sdk_project_load(void* project, const char* path) {
  }
 +
 +
@@ -1446,6 +1626,30 @@ index c61a0cc..920353a 100644
 +u32 sdk_hocket_random(u32 a,u32 b,u32 c) {
 +    return clear_hocket(sdk_project_clear_random?sdk_project_clear_random:stock<u32(u32,u32,u32)>(0x8d588988),a,b,c);
 +}
+diff --git a/sdk/platform/opxy-1.2.1/screen.hpp b/sdk/platform/opxy-1.2.1/screen.hpp
+index 11ffecb..73b8c86 100644
+--- a/sdk/platform/opxy-1.2.1/screen.hpp
++++ b/sdk/platform/opxy-1.2.1/screen.hpp
+@@ -86,7 +86,8 @@ inline void set_text(Leaf* node, const char* text) { platform::set_text(node, te
+ // the x adjustment of an earlier anchor, cleared as the drum page does.
+-inline void anchor_middle(Leaf* node) {
++inline void set_text_anchor(Leaf* node, u32 anchor) {
+     unsigned char* bytes = reinterpret_cast<unsigned char*>(node);
+     *reinterpret_cast<word*>(bytes + 88) &= 0xffff0000u;
+-    *reinterpret_cast<word*>(bytes + 96) = 1;
++    *reinterpret_cast<word*>(bytes + 96) = anchor;
+ }
++inline void anchor_middle(Leaf* node) { set_text_anchor(node,1); }
+ inline void set_fill(PathNode* node, u32 id) { stock<void(PathNode*, u32)>(0x8d5fa986)(node, id); }
+diff --git a/tooling/adapters.py b/tooling/adapters.py
+index 2fcc449..0f67eb8 100644
+--- a/tooling/adapters.py
++++ b/tooling/adapters.py
+@@ -874,2 +874,4 @@ def generate_player_object(directory, m):
+     values.update(player_shift_values(m))
++    if m.id == 'hocket':
++        values['SHIFT'] = (values['SHIFT'] or ', nullptr') + ', editor_enum_turn'
+     if m.display == 'player':
 diff --git a/tooling/hocket_probe.py b/tooling/hocket_probe.py
 new file mode 100644
 index 0000000..3ea64c9

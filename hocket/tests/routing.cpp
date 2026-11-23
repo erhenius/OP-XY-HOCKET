@@ -141,7 +141,7 @@ static void check_spray() {
         r.route(0,0,1,1); r.route(1,0,2,0);
         Grid& grid=r.grids[0];
         grid.pattern().changedMask=mask^15;
-        grid.transpose=-12; grid.shuffle=shuffle;
+        grid.shuffle=shuffle;
         grid.tail=4; // 250 ms, or 120 player ticks at 120 BPM.
         const u32 releaseAt=540;
         std::vector<unsigned> allowed;
@@ -150,13 +150,13 @@ static void check_spray() {
             if(mask&(1u<<i)) allowed.push_back(i);
         }
         r.press(); r.run(releaseAt); r.lift();
-        grid.transpose=12; grid.tail=3;
+        grid.tail=3;
         r.run(220);
         unsigned n=0,seen=0,last=0;
         for(const Hit& h:r.hits) {
             if(!h.on || h.track) continue;
-            assert(!allowed.empty() && h.pitch>=48 && h.pitch<56);
-            const unsigned bit=1u<<(h.pitch-48);
+            assert(!allowed.empty() && h.pitch>=60 && h.pitch<68);
+            const unsigned bit=1u<<(h.pitch-60);
             assert(mask&bit);
             const unsigned pos=n%allowed.size();
             const unsigned tick=rest?(n/allowed.size())*(allowed.back()+1)+allowed[pos]:n;
@@ -202,7 +202,7 @@ static void check_spray() {
         paused.lift(); paused.run(700); assert(!paused.states[0].eventCount);
     }
     Rig root;
-    root.knobs[1].value[0]=Rig::word(1,3); root.grids[1].transpose=12;
+    root.knobs[1].value[0]=Rig::word(1,3); root.grids[1].pattern().set_pitch(0,12);
     root.grids[1].pattern().changedMask=15^1;
     root.route(0,0,1,3); root.route(1,0,2,0);
     root.press(); root.run(8); root.lift(); root.run(600);
@@ -298,7 +298,125 @@ static void check_delays() {
     }
     assert(!dense.states[0].eventCount && !dense.states[0].leaseCount);
 }
+static void check_expanded_timing() {
+    const unsigned periods[]={30,45,60,90,120,180,240,360,480};
+    for (u32 ri=0;ri<9;++ri) for (u32 gi=0;gi<20;++gi) {
+        Rig r; r.arp(0); r.knobs[0].clicks[0]=1; r.route(0,0,1,3);
+        r.knobs[0].value[2]=timing_word<rateChoices>(ri);
+        r.knobs[0].value[3]=timing_word<gateChoices>(gi);
+        const u32 beat=periods[ri], duration=beat*(gi+1)/20;
+        r.press(); r.run(beat*4+61);
+        for (u32 j=0;j<4;++j) {
+            const unsigned note=60+intervals[j], at=beat*j;
+            assert(r.count(0,note,at)==1 && r.count(0,note,at+duration,false)==1);
+            assert(r.count(1,note,at+60)==1 && r.count(1,note,at+60+duration,false)==1);
+        }
+        r.lift(); r.run(2); assert(!r.states[0].eventCount && !r.states[0].leaseCount);
+        // An incoming sustained note starts Spray at the same interval and gate.
+        Rig spray; spray.knobs[0].value[0]=Rig::word(1,3);
+        spray.knobs[0].value[2]=r.knobs[0].value[2]; spray.knobs[0].value[3]=r.knobs[0].value[3];
+        spray.grids[0].pattern().changedMask=1^15;
+        spray.press(); spray.run(beat*2+1);
+        assert(spray.count(0,60,0) && spray.count(0,60,beat) && spray.count(0,60,duration,false));
+    }
+}
+static void check_velocity_fork() {
+    for (u32 split=0;split<=forkMax;++split) for (u32 velocity=1;velocity<=127;++velocity) {
+        Rig r;
+        // Test a receiving Note track with its own fork, plus independent delays.
+        r.route(0,0,1,1); r.route(1,0,2,3); r.route(1,1,3,1);
+        r.grids[1].fork=split;
+        r.press(0,60,velocity); r.run(2); r.lift(); r.run(80);
+        const bool upper=!split || velocity>=fork_threshold(split);
+        const bool lower=!split || velocity<fork_threshold(split);
+        assert(r.count(1,60,15)==1 && r.count(1,60,17,false)==1);
+        assert(r.count(2,60,75)==upper && r.count(2,60,77,false)==upper);
+        assert(r.count(3,60,30)==lower && r.count(3,60,32,false)==lower);
+        assert(r.hits.size()==4+2*(unsigned(upper)+unsigned(lower)));
+        for (const Hit& hit:r.hits) if (hit.on) assert(hit.vel==velocity);
+    }
+    Rig missing;
+    missing.route(0,0,1,0); missing.grids[0].fork=7;
+    missing.press(0,60,63); missing.run(1); missing.lift();
+    assert(missing.hits.size()==2 && !missing.states[0].eventCount);
+}
+
+static void check_swing_and_nudge() {
+    for (u32 ri=0;ri<rateChoices;++ri) for (i32 depth=-swingMax;depth<=swingMax;++depth) {
+        Rig r; r.arp(0); r.route(0,0,1,1); r.grids[0].swing=depth;
+        r.knobs[0].clicks[0]=r.knobs[0].clicks[2]=r.knobs[0].clicks[3]=1;
+        r.knobs[0].value[2]=timing_word<rateChoices>(ri);
+        r.grids[0].pattern().changedMask=15^5; // on, rest, on; odd-length repeat
+        const u32 rate=rate_steps[ri]; r.press(); r.run(8*rate+1); r.lift(); r.run(rate+20);
+        for (u32 i=0;i<9;++i) {
+            if (i%3==1) continue;
+            const i32 displacement=(rate*swing_magnitude(depth)+50)/100;
+            const u32 when=i*rate+((i%2)?(depth<0?-displacement:displacement):0);
+            const u32 pitch=i%3?72:60;
+            assert(r.count(0,pitch,when)==1 && r.count(1,pitch,when+15)==1);
+        }
+        assert(r.hits.size()==24);
+    }
+    for (u32 ri=0;ri<rateChoices;++ri) for (u32 depth=0;depth<=nudgeMax;++depth) {
+        Rig r; r.knobs[0].value[0]=Rig::word(1,3); r.route(0,0,1,1);
+        r.knobs[0].value[2]=timing_word<rateChoices>(ri); r.knobs[0].clicks[0]=1;
+        r.grids[0].nudge=depth;
+        const u32 rate=rate_steps[ri], radius=rate*depth/40;
+        r.press(); r.run(18*rate+rate/2+1);
+        unsigned hits=0; bool early=false,late=false;
+        for (const Hit& hit:r.hits) if (hit.on && hit.track==0) {
+            const int offset=int(hit.now)-int(hits*rate);
+            assert(offset>=-int(radius) && offset<=int(radius));
+            if (!hits) assert(!offset);
+            if (hits<18) assert(r.count(1,hit.pitch,hit.now+15)==1);
+            early|=offset<0; late|=offset>0; ++hits;
+        }
+        assert(hits==19);
+        if (depth==nudgeMax) assert(early && late);
+    }
+    // Cover both extremes and every shared boundary for each rate. Compare
+    // successive deadlines directly, including across the 32-bit clock wrap.
+    for (u32 ri=0;ri<rateChoices;++ri) {
+        Event e={}; e.kind=Kind::sprayStep; e.rateIndex=ri; e.depth=nudgeMax;
+        e.id=42; e.start=e.due=0xffffff00u;
+        const i32 rate=e.interval(); u32 previous=e.start;
+        bool earliest=false,latest=false;
+        for (unsigned i=1;i<=8192;++i) {
+            e.due+=rate; place_attack(e);
+            assert(static_cast<i32>(e.attack()-previous)>0);
+            assert(e.offset>=-(rate/2) && e.offset<=rate/2);
+            earliest|=e.offset==-(rate/2); latest|=e.offset==rate/2;
+            previous=e.attack();
+        }
+        assert(earliest && latest);
+    }
+    // A held repeat responds without a retrigger. Its pending step at 60 is fixed.
+    Rig live; live.arp(0); live.knobs[0].clicks[2]=1; live.press(); live.run(30);
+    live.grids[0].swing=swingMax; live.run(210);
+    assert(live.count(0,67,60) && live.count(0,72,120) && live.count(0,79,237));
+    Rig cloud; cloud.knobs[0].value[0]=Rig::word(1,3); cloud.press(); cloud.run(30);
+    cloud.grids[0].nudge=nudgeMax; cloud.run(570);
+    bool displaced=false;
+    for (const Hit& h:cloud.hits) if (h.on && h.now>60 && h.now%60) displaced=true;
+    assert(displaced);
+    for (int timing:{-swingMax,int(swingMax),0}) {
+        const bool spray=timing==0;
+        Rig a,b;
+        for (Rig* r:{&a,&b}) {
+            r->knobs[0].value[0]=Rig::word(spray?1:2,3);
+            r->knobs[0].clicks[2]=r->knobs[0].clicks[3]=1;
+            r->grids[0].shuffle=true; r->grids[0].swing=timing; r->grids[0].nudge=nudgeMax;
+            r->grids[0].pattern().changedMask=15^0x52; r->press(); r->run(10);
+        }
+        a.run(767); b.run(767,0); a.run(660); b.run(660);
+        for (const Hit& h:a.hits) if (h.on && h.now>=777) assert(b.count(0,h.pitch,h.now));
+        for (const Hit& h:b.hits) if (h.on && h.now>=777) assert(a.count(0,h.pitch,h.now));
+    }
+}
 int main(){
+    check_velocity_fork();
+    check_swing_and_nudge();
+    check_expanded_timing();
     check_delays();
     check_spray();
     check_spray_overlap();

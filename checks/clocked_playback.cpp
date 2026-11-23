@@ -12,7 +12,7 @@ struct MockTrack {
     platform::PlayerChord records[8]; volatile u32 held;
     unsigned attacks, releases, velocities[128], played[128]; bool sounding[128];
 };
-static MockTrack tracks[2]={};
+static MockTrack tracks[3]={};
 static void release_stock(void* obj,u32 note) {
     auto& t=*static_cast<MockTrack*>(obj);
     for(u32 i=0;i<t.held;++i) if(t.records[i].root==note && t.records[i].count) {
@@ -64,7 +64,7 @@ void player_clock_pending(void* obj,bool pending) {
 void* player_state(void* obj) {return &static_cast<MockTrack*>(obj)->state;}
 player::Controls player_controls(void* obj) {return static_cast<MockTrack*>(obj)->controls;}
 void* player_object(u32 n,const void* const* vt) {
-    assert(vt==hocket_player()->vtable);return n<2 ? &tracks[n] : nullptr;
+    assert(vt==hocket_player()->vtable);return n<3 ? &tracks[n] : nullptr;
 }
 void player_output(void* obj,player::Display& d) {
     auto& t=*static_cast<MockTrack*>(obj); player_activity(t.records,t.held,d.played);
@@ -93,7 +93,7 @@ static void check_editor_recall() {
     auto* snapshot=reinterpret_cast<const void*>(0x85b7e3d4u);
     assert(sdk_hocket_save(snapshot,disk) && edits>start);
     assert(disk[0]==2 && disk[1]==17 && disk[2]==8 && disk[3]==22 && disk[4]==29);
-    assert(disk[7]==143 && disk[15]==0 && disk[16]==0 && disk[17]==3);
+    assert(disk[7]==143 && disk[15]==0 && disk[16]==19 && disk[17]==0 && disk[18]==0 && disk[19]==3);
     editor_init(0);
     assert(!a.grid.page && !a.grid.capture.armed());
     assert(sdk_hocket_save(first,after) && !std::memcmp(after,disk,sizeof disk));
@@ -113,7 +113,32 @@ static void check_editor_recall() {
     sdk_hocket_clear();
     std::puts("PASS: encoder edits, 15/16 routing, track isolation, reselect, discard live capture and restore.");
 }
+static void check_timing_encoders() {
+    const auto turn=hocket_player()->enum_turn;
+    assert(turn);
+    for (u32 slot : {2u,3u}) {
+        const u32 count=slot==2?9:20;
+        for (u32 old=0;old<4;++old) {
+            const i32 word=opxy::platform::player_enum_turn(0,4,old?old:-1);
+            const u32 index=slot==2?old*2:old*5+4;
+            const i32 next=turn(slot,word,count,1);
+            const u32 decoded=slot==2?hocket::timing_index<9>(next):hocket::timing_index<20>(next);
+            assert(decoded==(index+1<count?index+1:count-1));
+            assert(turn(slot,word,count,0)==word);
+        }
+        i32 value=turn(slot,0,count,-2147483647-1);
+        for (u32 i=0;i<count;++i) {
+            assert((slot==2?hocket::timing_index<9>(value):hocket::timing_index<20>(value))==i);
+            value=turn(slot,value,count,1);
+        }
+        for (u32 i=count;i;--i) {
+            assert((slot==2?hocket::timing_index<9>(value):hocket::timing_index<20>(value))==i-1);
+            value=turn(slot,value,count,-1);
+        }
+    }
+}
 int main(){
+    check_timing_encoders();
     check_editor_recall();
     tracks[1].object[1]=1;
     auto& a=tracks[0];auto& b=tracks[1];
@@ -121,6 +146,28 @@ int main(){
     auto on=reinterpret_cast<u32(*)(void*,u32,u32,u32,u32)>(const_cast<void*>(vt[5]));
     auto off=reinterpret_cast<void(*)(void*,u32)>(const_cast<void*>(vt[6]));
     auto tick=reinterpret_cast<void(*)(void*)>(const_cast<void*>(vt[13]));
+    // The player ABI receives note-on velocity. Keep the instrument response
+    // flat in this fixture and inspect stock player records on both branches.
+    tracks[2].object[1]=2;
+    sdk_hocket_clear();
+    assert(editor_turn(0,1,7,false) && hocket::fork_threshold(settings(0).grid.fork)==64);
+    settings(0).routeWords[0]=hocket_settings::Track::centre(0,2);
+    settings(0).routeWords[2]=hocket_settings::Track::centre(2,3);
+    settings(0).routeWords[1]=settings(0).routeWords[3]=hocket_settings::Track::centre(1,0);
+    for (unsigned v:{1u,63u,64u,127u}) {
+        assert(on(&a,60,0,0,v)==1);
+        for (auto& t:tracks) tick(&t);
+        assert(a.sounding[60] && b.sounding[60]==(v>=64) && tracks[2].sounding[60]==(v<64));
+        off(&a,60);
+        for (auto& t:tracks) { tick(&t); assert(!t.sounding[60]); }
+    }
+    a.controls.value[0]=0x60000000; assert(editor_turn(0,1,200,false) && settings(0).grid.swing==19);
+    assert(editor_turn(0,1,-2147483647-1,false) && settings(0).grid.swing==-19);
+    assert(editor_turn(0,1,19,false) && !settings(0).grid.swing);
+    assert(editor_turn(0,1,2147483647,false) && settings(0).grid.swing==19);
+    a.controls.value[0]=0x40000000; assert(editor_turn(0,1,200,false) && settings(0).grid.nudge==20);
+    assert(settings(0).grid.fork==7 && settings(0).grid.swing==19);
+    a=MockTrack{}; b=MockTrack{}; b.object[1]=1;
     // Capture at the adapter entry point with both tracks routed. Incoming
     // handoffs can sound on the armed track but never enter its take.
     sdk_hocket_clear(); editor_init(0); editor_init(1);
@@ -174,9 +221,10 @@ int main(){
     a=MockTrack{}; b=MockTrack{}; b.object[1]=1;
     sdk_hocket_clear(); editor_init(0); editor_init(1);
     a.controls.value[0]=0x40000000; // Spray, between the old Note and Arp centres.
-    assert(editor_turn(0,1,200,false) && settings(0).grid.transpose==24);
-    assert(editor_turn(0,1,1,true) && settings(0).grid.transpose==24);
-    assert(editor_turn(0,1,-12,false) && settings(0).grid.transpose==12);
+    assert(editor_turn(0,1,200,false) && settings(0).grid.nudge==20);
+    assert(editor_turn(0,1,1,true) && settings(0).grid.nudge==20);
+    assert(editor_turn(0,1,-12,false) && settings(0).grid.nudge==8);
+    assert(editor_turn(0,1,-20,false) && settings(0).grid.nudge==0);
     // Walk every decay preset, then set one second.
     for(unsigned i=1;i<=6;++i) assert(editor_click(0,2) && settings(0).grid.tail==i%6);
     assert(editor_click(0,1) && editor_click(0,2) && settings(0).grid.capture.armed());
@@ -192,7 +240,7 @@ int main(){
         if(a.held) tick(&a);
         if(b.held) tick(&b);
     }
-    assert(a.played[79]==14 && b.played[79]==14 && a.releases==14 && b.releases==14);
+    assert(a.played[67]==14 && b.played[67]==14 && a.releases==14 && b.releases==14);
     for(unsigned i=0;i<14;++i) {
         const unsigned at=30+60*i;
         const unsigned elapsed=at<=360?0:at*7629/1200-360*7629/1200;
@@ -216,7 +264,7 @@ int main(){
         }
         if(shuffle) assert(editor_click(0,0));
         assert(editor_click(0,3) && editor_turn(0,0,12,true) && editor_click(0,1));
-        const unsigned rate=hocket::rate_steps[rateIndex],gate=rate*(gateIndex+1)/4;
+        const unsigned rate=hocket::rate_steps[2*rateIndex],gate=rate*(gateIndex+1)/4;
         const unsigned delay=hocket::delay_steps(delayIndex,1200);
         const unsigned first=(pattern==0x12)?rate:0, pitch=(pattern==0x12)?67:60;
         auto runTrack=[&](MockTrack& t){ if(t.held) tick(&t); };

@@ -64,10 +64,11 @@ struct Grid {
     volatile u8 page, active;
     volatile bool shuffle,editEnabled;
     volatile u8 tail; // One second of release at zero initialization.
-    volatile signed char transpose;
-    void turn_transpose(i32 delta) {
-        const i32 value=transpose;
-        transpose=delta>24-value?24:(delta< -24-value?-24:value+delta);
+    volatile signed char swing;
+    volatile u8 fork, nudge; // Independent K2 detents for each playhead.
+    template<class T> static void turn_setting(volatile T& setting,i32 delta,i32 limit,i32 minimum=0) {
+        const i32 value=setting;
+        setting=delta>limit-value?limit:(delta<minimum-value?minimum:value+delta);
     }
     Pattern patterns[2];
     Capture capture;
